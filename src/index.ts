@@ -1,13 +1,8 @@
-import logger from './logger';
-import app from './app';
 
-const port = app.get('port');
-const server = app.listen(port);
+const a: any = { c: 1 }
+console.log('1....')
+console.log('a?.b', a?.b)
+console.log('a?.c', a?.c)
+console.log('a?.d', a?.d)
 
-process.on('unhandledRejection', (reason, p) =>
-  logger.error('Unhandled Rejection at: Promise ', p, reason)
-);
 
-server.on('listening', () =>  
-  logger.info('Feathers application started on http://%s:%d', app.get('host'), port)
-);

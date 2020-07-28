@@ -1,13 +1,9 @@
 {
-  "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true
-  },
-  "exclude": [
-    "test"
-  ]
+    "compilerOptions": {
+        "target": "es5",
+        "moduleResolution": "node"
+    },
+    "include": [
+        "./src/**/*"
+    ]
 }
