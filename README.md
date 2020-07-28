@@ -1,12 +1,6 @@
 ## 项目简介
 
-本项目使用 `Typescript` + `rollup` 构建的超休闲游戏开发模板
-
-用心开发精品游戏
-
-- 快速开发
-- 可适配手机端、iPad 端、PC 端
-- 性能流畅度极佳
+本项目使用 `Typescript` + `rollup` + `Koa` 构建的
 
 ---
 
@@ -22,40 +16,15 @@ yarn build # 打包生产
 
 ```typescript
 src // 源码
-  const // 常量
-  scenes // 场景
-  utils // 公用方法
-  services // 后端服务
 dist // 编译后文件、首页、静态资源
-  index.html // 首页
-  assets // 静态资源
 .editorconfig // VSCode 安装 EditorConfig for VS Code 配合使用
 rollup.dev.js // 开发配置
 rollup.dist.js // 生产配置
-tsconfig.json // 为了让 VSCode 识别 Typescript 语法
+tsconfig.json // ts 配置文件 
 ```
 
 ## 打包生产测试
 
-使用 [http-server](https://github.com/http-party/http-server#readme) 测试
-
-1. 全局安装 `http-server`
-
-   ```bash
-   yarn global add -D http-server
-   ```
-
-1. 启动服务
-
-   ```bash
-   http-server ./dist
-   ```
-
-1. 访问
-
-   ```bash
-   http://127.0.0.1:10001
-   ```
 ## 小知识点
 
 1. 更新 npm 包
