@@ -1,7 +1,1 @@
-'use strict';
-
-var a = { c: 1 };
-console.log('1....');
-console.log('a?.b', a === null || a === void 0 ? void 0 : a.b);
-console.log('a?.c', a === null || a === void 0 ? void 0 : a.c);
-console.log('a?.d', a === null || a === void 0 ? void 0 : a.d);
+"use strict";function sum(){for(var args=[],_i=0;_i<arguments.length;_i++)args[_i]=arguments[_i];return args.reduce(function(prev,total){return total+prev},0)}function b(){}var aa=Object.freeze({__proto__:null,sum:sum,b:b}),Koa=require("koa");console.log(aa);var app=new Koa;

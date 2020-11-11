@@ -1,17 +1,19 @@
-import resolve from 'rollup-plugin-node-resolve'
 import typescript from 'rollup-plugin-typescript2'
 
 export default {
-  input: './src/index.ts',
+  input: './src/app.ts',
   output: {
-    file: './dist/app.js',
-    name: 'mm',
+    file: './dist/app.dev.js',
     format: 'cjs'
   },
   plugins: [
-    resolve({
-      extensions: ['.ts']
-    }),
-    typescript()
+    typescript({
+      tsconfigOverride: {
+        compilerOptions: {
+          module: "ESNext",
+        }
+      },
+      useTsconfigDeclarationDir: true
+    })
   ]
 }
