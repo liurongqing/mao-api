@@ -1,9 +1,11 @@
-const Koa = require('koa')
+const Koa = require("koa");
+const app = new Koa();
 
-import * as aa from './sum'
+import { routers } from 'src/routers';
+app.use(routers.routes()).use(routers.allowedMethods());
 
-1
-console.log(aa)
+app.on('error', (err: any) => {
+  console.error(err.message);
+});
 
-const app = new Koa()
-
+app.listen(9001);

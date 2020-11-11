@@ -9,8 +9,15 @@
     "build": "rollup --config rollup.dist.js"
   },
   "license": "MIT",
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa-router": "^10.0.0",
+    "mongoose": "^5.10.13"
+  },
   "devDependencies": {
     "@types/koa": "^2.11.6",
+    "@types/koa-router": "^7.4.1",
+    "@types/mongoose": "^5.10.0",
     "nodemon": "^2.0.6",
     "rollup": "^2.33.1",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -18,8 +25,5 @@
     "rollup-plugin-typescript2": "^0.29.0",
     "rollup-plugin-uglify": "^6.0.4",
     "typescript": "^4.0.5"
-  },
-  "dependencies": {
-    "koa": "^2.13.0"
   }
 }

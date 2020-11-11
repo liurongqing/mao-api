@@ -1,21 +1,22 @@
 'use strict';
 
-// sum.ts
-function sum() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-    }
-    return args.reduce(function (prev, total) { return total + prev; }, 0);
-}
-function b() { }
+var login = function (ctx, next) {
+    ctx.body = 'login';
+};
 
-var aa = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  sum: sum,
-  b: b
-});
+var Router = require('koa-router');
+var adminRouter = new Router();
+adminRouter
+    .get('/login', login);
 
-var Koa = require('koa');
-console.log(aa);
+var Router$1 = require('koa-router');
+var routers = new Router$1();
+routers.use('/admin', adminRouter.routes(), adminRouter.allowedMethods());
+
+var Koa = require("koa");
 var app = new Koa();
+app.use(routers.routes()).use(routers.allowedMethods());
+app.on('error', function (err) {
+    console.error(err.message);
+});
+app.listen(9001);

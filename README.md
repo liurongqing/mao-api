@@ -33,6 +33,16 @@ tsconfig.json // ts 配置文件
     yarn upgrade-interactive --lastest # 空格: 选择  i: 反选  a: 全选 会更新 yarn.lock 文件，不会更新package.json文件
     yarn upgrade phaser@lastest # 更新到最新，并更新 package.json 文件
     ```
+## 规范
+
+使用 vscode 默认格式化， `cmd` + `,` 进入配置
+1. 配置分号规则
+
+    ```bash
+    "javascript.format.semicolons": "insert",
+    "typescript.format.semicolons": "insert"
+    ```
+    
 
 ## 问题反馈
 
