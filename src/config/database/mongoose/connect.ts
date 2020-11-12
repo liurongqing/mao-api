@@ -7,6 +7,7 @@ export default () => {
     useCreateIndex: true,
     autoIndex: false,
     useFindAndModify: false,
+    useUnifiedTopology: true,
     useNewUrlParser: true
   });
   const db = mongoose.connection;
