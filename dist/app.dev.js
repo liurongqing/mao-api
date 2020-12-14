@@ -135,7 +135,19 @@ adminRouter
     .get('/system/admin', AdminController.find);
 
 var Schema$1 = mongoose.Schema;
-var usersModel = mongoose.model('users', new Schema$1({
+var levelsModel = mongoose.model('levels', new Schema$1({
+    level: Number,
+    topic: Array,
+    answer: Array,
+    type: {
+        type: Number,
+        default: 4,
+        enum: [4, 9]
+    }
+}, { collection: 'levels', versionKey: false, timestamps: true }));
+
+var Schema$2 = mongoose.Schema;
+var usersModel = mongoose.model('users', new Schema$2({
     openid: String,
     level: Number,
     life: {
@@ -145,30 +157,60 @@ var usersModel = mongoose.model('users', new Schema$1({
     levels: Array
 }, { collection: 'users', versionKey: false, timestamps: true }));
 
-var SudokuUsersController = {
-    // get 查询列表
-    find: function (ctx) {
-        return __awaiter(this, void 0, void 0, function () {
-            var fields, result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        fields = '_id levels level life';
-                        return [4 /*yield*/, usersModel.findOne({ openid: 'xx' }, fields)];
-                    case 1:
-                        result = _a.sent();
-                        ctx.body = formatJson(0, result);
-                        return [2 /*return*/];
+var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var life, fields, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, findLife()];
+            case 1:
+                life = (_a.sent()).life;
+                if (life <= 0) {
+                    ctx.body = formatJson(-1, {}); // 无生命值
+                    return [2 /*return*/];
                 }
-            });
-        });
-    },
-};
+                fields = '_id topic answer type';
+                return [4 /*yield*/, levelsModel.findOne({ level: '1' }, fields)];
+            case 2:
+                result = _a.sent();
+                ctx.body = formatJson(0, result);
+                return [2 /*return*/];
+        }
+    });
+}); };
+var findLife = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var fields, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                fields = '_id life';
+                return [4 /*yield*/, usersModel.findOne({ openid: 'xx' }, fields)];
+            case 1:
+                result = _a.sent();
+                return [2 /*return*/, result];
+        }
+    });
+}); };
+
+var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var fields, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                fields = '_id levels level life';
+                return [4 /*yield*/, usersModel.findOne({ openid: 'xx' }, fields)];
+            case 1:
+                result = _a.sent();
+                ctx.body = formatJson(0, result);
+                return [2 /*return*/];
+        }
+    });
+}); };
 
 var Router$1 = require('koa-router');
 var sudokuRouter = new Router$1();
 sudokuRouter
-    .get('/users', SudokuUsersController.find);
+    .get('/user', find$1)
+    .get('/level', find);
 
 var Router$2 = require('koa-router');
 var routers = new Router$2();

@@ -1,9 +1,10 @@
 const Router = require('koa-router');
 export const sudokuRouter = new Router();
 
-import SudokuUsersController from 'src/controllers/sudoku/users';
+import { usersController, levelsController } from 'src/controllers/sudoku';
 
 sudokuRouter
-  .get('/users', SudokuUsersController.find);
+  .get('/user', usersController.find)
+  .get('/level', levelsController.find);
 
 
