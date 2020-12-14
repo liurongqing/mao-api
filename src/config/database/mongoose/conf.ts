@@ -1,7 +1,7 @@
 export const config = {
   user: 'liurongqing',
   pwd: '123456',
-  database: 'mao',
+  database: 'sudoku',
   host: 'localhost',
   port: 27017
 };

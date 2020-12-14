@@ -88,7 +88,7 @@ var adminModel = mongoose.model('mao_admin', new Schema({
 }, { collection: 'mao_admin', versionKey: false, timestamps: true }).index({ username: 1, isDeleted: -1 }, { unique: true }));
 
 var formatJson = function (code, data, msg) {
-    if (code === void 0) { code = 200; }
+    if (code === void 0) { code = 0; }
     if (data === void 0) { data = {}; }
     if (msg === void 0) { msg = ''; }
     return {
@@ -134,14 +134,51 @@ adminRouter
     .get('/login', login)
     .get('/system/admin', AdminController.find);
 
+var Schema$1 = mongoose.Schema;
+var usersModel = mongoose.model('users', new Schema$1({
+    openid: String,
+    level: Number,
+    life: {
+        type: Number,
+        default: 3
+    },
+    levels: Array
+}, { collection: 'users', versionKey: false, timestamps: true }));
+
+var SudokuUsersController = {
+    // get 查询列表
+    find: function (ctx) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fields, result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        fields = '_id levels level life';
+                        return [4 /*yield*/, usersModel.findOne({ openid: 'xx' }, fields)];
+                    case 1:
+                        result = _a.sent();
+                        ctx.body = formatJson(0, result);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    },
+};
+
 var Router$1 = require('koa-router');
-var routers = new Router$1();
+var sudokuRouter = new Router$1();
+sudokuRouter
+    .get('/users', SudokuUsersController.find);
+
+var Router$2 = require('koa-router');
+var routers = new Router$2();
 routers.use('/admin', adminRouter.routes(), adminRouter.allowedMethods());
+routers.use('/sudoku', sudokuRouter.routes(), sudokuRouter.allowedMethods());
 
 var config = {
     user: 'liurongqing',
     pwd: '123456',
-    database: 'mao',
+    database: 'sudoku',
     host: 'localhost',
     port: 27017
 };

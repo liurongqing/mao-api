@@ -1,4 +1,4 @@
-export const formatJson = (code = 200, data = {}, msg = '') => {
+export const formatJson = (code = 0, data = {}, msg = '') => {
   return {
     code,
     data,
