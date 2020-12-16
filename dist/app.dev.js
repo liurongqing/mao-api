@@ -1,10 +1,12 @@
 'use strict';
 
+var CryptoJS = require('crypto-js');
 var mongoose = require('mongoose');
+var axios = require('axios');
 
-var login = function (ctx, next) {
-    ctx.body = 'login';
-};
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -59,6 +61,31 @@ function __generator(thisArg, body) {
     }
 }
 
+/**
+ *
+ * @param code 数字
+ * @param data 返回数据
+ * @param msg 返回信息
+ */
+var formatJson = function (code, data, msg) {
+    if (code === void 0) { code = 0; }
+    if (data === void 0) { data = {}; }
+    if (msg === void 0) { msg = ''; }
+    return {
+        code: code,
+        data: data,
+        msg: msg,
+    };
+};
+var key = '1234567654321MAO';
+var encrypt = function (word) {
+    return CryptoJS.AES.encrypt(word, key).toString();
+};
+
+var login = function (ctx, next) {
+    ctx.body = 'login';
+};
+
 var Schema = mongoose.Schema;
 var adminModel = mongoose.model('mao_admin', new Schema({
     email: {
@@ -86,17 +113,6 @@ var adminModel = mongoose.model('mao_admin', new Schema({
     //   enum: [0, 1]
     // }
 }, { collection: 'mao_admin', versionKey: false, timestamps: true }).index({ username: 1, isDeleted: -1 }, { unique: true }));
-
-var formatJson = function (code, data, msg) {
-    if (code === void 0) { code = 0; }
-    if (data === void 0) { data = {}; }
-    if (msg === void 0) { msg = ''; }
-    return {
-        code: code,
-        data: data,
-        msg: msg,
-    };
-};
 
 // import { json, filterEmptyField } from '@/utils'
 // import { pagination, errcode } from '@/const'
@@ -206,11 +222,39 @@ var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
     });
 }); };
 
+var WX_BASE_PATH = 'https://api.weixin.qq.com';
+var APP_ID = 'wx6ef1e85ccdd6b748';
+var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
+
+var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var code, url, wxData, authStr, authorization;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                code = ctx.request.body.code;
+                url = WX_BASE_PATH + "/sns/jscode2session?appid=" + APP_ID + "&secret=" + APP_SECRET + "&js_code=" + code + "&grant_type=authorization_code";
+                return [4 /*yield*/, axios__default['default'](url)];
+            case 1:
+                wxData = (_a.sent()).data;
+                if (wxData.openid) {
+                    authStr = wxData.openid + '-' + wxData.session_key;
+                    authorization = encrypt(authStr);
+                    ctx.body = formatJson(wxData.errcode, authorization);
+                }
+                else {
+                    ctx.body = formatJson(wxData.errcode, wxData);
+                }
+                return [2 /*return*/];
+        }
+    });
+}); };
+
 var Router$1 = require('koa-router');
 var sudokuRouter = new Router$1();
 sudokuRouter
     .get('/user', find$1)
-    .get('/level', find);
+    .get('/level', find)
+    .post('/login', login$1);
 
 var Router$2 = require('koa-router');
 var routers = new Router$2();
@@ -244,11 +288,19 @@ var db = (function () {
 });
 
 var Koa = require("koa");
+var koaBody = require('koa-body');
 var app = new Koa();
 // 数据库连接
 db();
+app.use(koaBody());
 app.use(routers.routes()).use(routers.allowedMethods());
 app.on('error', function (err) {
     console.error(err.message);
 });
+app.use(function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        ctx.body = formatJson(-2, '404');
+        return [2 /*return*/];
+    });
+}); });
 app.listen(9001);
