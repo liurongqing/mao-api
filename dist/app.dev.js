@@ -23,6 +23,17 @@ OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+
 function __awaiter(thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -173,36 +184,57 @@ var usersModel = mongoose.model('users', new Schema$2({
     levels: Array
 }, { collection: 'users', versionKey: false, timestamps: true }));
 
+// 获取列表
 var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var life, fields, result;
+    var fields, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, findLife()];
+            case 0:
+                fields = '_id level topic answer type createdAt updatedAt';
+                return [4 /*yield*/, levelsModel.find({}, fields)];
             case 1:
-                life = (_a.sent()).life;
-                if (life <= 0) {
-                    ctx.body = formatJson(-1, {}); // 无生命值
-                    return [2 /*return*/];
-                }
-                fields = '_id topic answer type';
-                return [4 /*yield*/, levelsModel.findOne({ level: '1' }, fields)];
-            case 2:
                 result = _a.sent();
                 ctx.body = formatJson(0, result);
                 return [2 /*return*/];
         }
     });
 }); };
-var findLife = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var fields, result;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+// 添加题目， 默认取总数加1
+var save = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _id, type, topic, answer, data, result, count, err_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                fields = '_id life';
-                return [4 /*yield*/, usersModel.findOne({ openid: 'xx' }, fields)];
+                _a = ctx.request.body, _id = _a._id, type = _a.type, topic = _a.topic, answer = _a.answer;
+                data = {
+                    type: type,
+                    topic: topic,
+                    answer: answer
+                };
+                _b.label = 1;
             case 1:
-                result = _a.sent();
-                return [2 /*return*/, result];
+                _b.trys.push([1, 7, , 8]);
+                if (!_id) return [3 /*break*/, 3];
+                return [4 /*yield*/, levelsModel.updateOne({ _id: _id }, { $set: data })];
+            case 2:
+                result = _b.sent();
+                return [3 /*break*/, 6];
+            case 3: return [4 /*yield*/, levelsModel.count({})];
+            case 4:
+                count = _b.sent();
+                return [4 /*yield*/, levelsModel.create(__assign(__assign({}, data), { level: count + 1 }))];
+            case 5:
+                result = _b.sent();
+                _b.label = 6;
+            case 6:
+                ctx.body = formatJson(0, result);
+                return [3 /*break*/, 8];
+            case 7:
+                err_1 = _b.sent();
+                console.log('err', err_1);
+                ctx.body = formatJson(-100, err_1, '失败了');
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); };
@@ -254,6 +286,7 @@ var sudokuRouter = new Router$1();
 sudokuRouter
     .get('/user', find$1)
     .get('/level', find)
+    .post('/level', save)
     .post('/login', login$1);
 
 var Router$2 = require('koa-router');
@@ -292,6 +325,25 @@ var koaBody = require('koa-body');
 var app = new Koa();
 // 数据库连接
 db();
+// 跨域， 需要做开发环境的区分
+app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                ctx.set('Access-Control-Allow-Origin', '*');
+                ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+                ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+                if (!(ctx.method == 'OPTIONS')) return [3 /*break*/, 1];
+                ctx.body = 200;
+                return [3 /*break*/, 3];
+            case 1: return [4 /*yield*/, next()];
+            case 2:
+                _a.sent();
+                _a.label = 3;
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.use(koaBody());
 app.use(routers.routes()).use(routers.allowedMethods());
 app.on('error', function (err) {

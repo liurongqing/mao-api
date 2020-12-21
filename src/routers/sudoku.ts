@@ -6,6 +6,7 @@ import { usersController, levelsController, loginController } from 'src/controll
 sudokuRouter
   .get('/user', usersController.find)
   .get('/level', levelsController.find)
+  .post('/level', levelsController.save)
   .post('/login', loginController.login);
 
 
