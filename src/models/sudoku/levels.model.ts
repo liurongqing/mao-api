@@ -6,8 +6,8 @@ export const levelsModel = mongoose.model(
   new Schema(
     {
       level: Number, // 第几关
-      topic: Array, // 题目
-      answer: Array, // 答案
+      topic: String, // 题目
+      answer: String, // 答案
       type: {
         type: Number,
         default: 4, // 4宫格，与9宫格

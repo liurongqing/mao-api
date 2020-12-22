@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import { LIFE } from "../../const/index";
 const { Schema } = mongoose;
 
 export const usersModel = mongoose.model(
@@ -9,9 +10,19 @@ export const usersModel = mongoose.model(
       level: Number,
       life: {
         type: Number,
-        default: 3
+        default: LIFE
       },
-      levels: Array
+      levels: String,
+      avatarUrl: String, // 头像
+      city: String, // "Shenzhen"
+      country: String, // "China"
+      gender: String, // 性别 1男
+      language: String, // 语言
+      nickName: {
+        type: String,
+        default: '游客'
+      }, // 昵称
+      province: String // 省
     },
     { collection: 'users', versionKey: false, timestamps: true }
   )

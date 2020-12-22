@@ -1,18 +1,27 @@
 import { levelsModel } from '../../models/sudoku/levels.model';
 import { usersModel } from '../../models/sudoku/users.model';
-import { formatJson } from '../../utils';
+import { formatJson, getOpenid } from 'src/utils';
 
 
 // 获取列表
 export const find = async (ctx: any) => {
-  // const { life }: any = await findLife(ctx);
-  // if (life <= 0) {
-  //   ctx.body = formatJson(-1, {}); // 无生命值
-  //   return;
-  // }
-
   const fields = '_id level topic answer type createdAt updatedAt';
   const result = await levelsModel.find({}, fields);
+  ctx.body = formatJson(0, result);
+};
+
+export const findOne = async (ctx: any) => {
+  const { level } = ctx.params;
+  const { authorization } = ctx.request.header;
+  const openid = getOpenid(authorization);
+  const { life }: any = await findLife(openid);
+  if (life <= 0) {
+    ctx.body = formatJson(-1, {}); // 无生命值
+    return;
+  }
+
+  const fields = '_id type topic answer';
+  const result = await levelsModel.findOne({ level }, fields);
   ctx.body = formatJson(0, result);
 };
 
@@ -44,8 +53,8 @@ export const save = async (ctx: any) => {
 };
 
 // 查找生命值
-export const findLife = async (ctx: any) => {
+export const findLife = async (openid: string) => {
   const fields = '_id life';
-  const result = await usersModel.findOne({ openid: 'xx' }, fields);
+  const result = await usersModel.findOne({ openid }, fields);
   return result;
 };

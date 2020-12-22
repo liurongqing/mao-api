@@ -92,9 +92,14 @@ var key = '1234567654321MAO';
 var encrypt = function (word) {
     return CryptoJS.AES.encrypt(word, key).toString();
 };
-
-var login = function (ctx, next) {
-    ctx.body = 'login';
+var decrypt = function (word) {
+    var bytes = CryptoJS.AES.decrypt(word, key);
+    return bytes.toString(CryptoJS.enc.Utf8);
+};
+var getOpenid = function (str) {
+    if (!str)
+        return '';
+    return decrypt(str).split('-')[0];
 };
 
 var Schema = mongoose.Schema;
@@ -158,14 +163,13 @@ var AdminController = {
 var Router = require('koa-router');
 var adminRouter = new Router();
 adminRouter
-    .get('/login', login)
     .get('/system/admin', AdminController.find);
 
 var Schema$1 = mongoose.Schema;
 var levelsModel = mongoose.model('levels', new Schema$1({
     level: Number,
-    topic: Array,
-    answer: Array,
+    topic: String,
+    answer: String,
     type: {
         type: Number,
         default: 4,
@@ -173,15 +177,30 @@ var levelsModel = mongoose.model('levels', new Schema$1({
     }
 }, { collection: 'levels', versionKey: false, timestamps: true }));
 
+var WX_BASE_PATH = 'https://api.weixin.qq.com';
+var APP_ID = 'wx6ef1e85ccdd6b748';
+var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
+var LIFE = 3;
+
 var Schema$2 = mongoose.Schema;
 var usersModel = mongoose.model('users', new Schema$2({
     openid: String,
     level: Number,
     life: {
         type: Number,
-        default: 3
+        default: LIFE
     },
-    levels: Array
+    levels: String,
+    avatarUrl: String,
+    city: String,
+    country: String,
+    gender: String,
+    language: String,
+    nickName: {
+        type: String,
+        default: '游客'
+    },
+    province: String // 省
 }, { collection: 'users', versionKey: false, timestamps: true }));
 
 // 获取列表
@@ -193,6 +212,30 @@ var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function ()
                 fields = '_id level topic answer type createdAt updatedAt';
                 return [4 /*yield*/, levelsModel.find({}, fields)];
             case 1:
+                result = _a.sent();
+                ctx.body = formatJson(0, result);
+                return [2 /*return*/];
+        }
+    });
+}); };
+var findOne = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var level, authorization, openid, life, fields, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                level = ctx.params.level;
+                authorization = ctx.request.header.authorization;
+                openid = getOpenid(authorization);
+                return [4 /*yield*/, findLife(openid)];
+            case 1:
+                life = (_a.sent()).life;
+                if (life <= 0) {
+                    ctx.body = formatJson(-1, {}); // 无生命值
+                    return [2 /*return*/];
+                }
+                fields = '_id type topic answer';
+                return [4 /*yield*/, levelsModel.findOne({ level: level }, fields)];
+            case 2:
                 result = _a.sent();
                 ctx.body = formatJson(0, result);
                 return [2 /*return*/];
@@ -238,14 +281,30 @@ var save = function (ctx) { return __awaiter(void 0, void 0, void 0, function ()
         }
     });
 }); };
-
-var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+// 查找生命值
+var findLife = function (openid) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                fields = '_id life';
+                return [4 /*yield*/, usersModel.findOne({ openid: openid }, fields)];
+            case 1:
+                result = _a.sent();
+                return [2 /*return*/, result];
+        }
+    });
+}); };
+
+var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var fields, authorization, openid, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
                 fields = '_id levels level life';
-                return [4 /*yield*/, usersModel.findOne({ openid: 'xx' }, fields)];
+                authorization = ctx.request.header.authorization;
+                openid = getOpenid(authorization);
+                return [4 /*yield*/, usersModel.findOne({ openid: openid }, fields)];
             case 1:
                 result = _a.sent();
                 ctx.body = formatJson(0, result);
@@ -253,12 +312,36 @@ var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
+var save$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var userInfo, authorization, openid, result, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                userInfo = ctx.request.body.userInfo;
+                authorization = ctx.request.header.authorization;
+                openid = getOpenid(authorization);
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                if (!openid) return [3 /*break*/, 3];
+                return [4 /*yield*/, usersModel.updateOne({ openid: openid }, { $set: __assign({}, userInfo) })];
+            case 2:
+                result = _a.sent();
+                return [3 /*break*/, 3];
+            case 3:
+                ctx.body = formatJson(0, result);
+                return [3 /*break*/, 5];
+            case 4:
+                err_1 = _a.sent();
+                console.log('err', err_1);
+                ctx.body = formatJson(-100, err_1, '失败了');
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
 
-var WX_BASE_PATH = 'https://api.weixin.qq.com';
-var APP_ID = 'wx6ef1e85ccdd6b748';
-var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
-
-var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var code, url, wxData, authStr, authorization;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -271,6 +354,7 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
                 if (wxData.openid) {
                     authStr = wxData.openid + '-' + wxData.session_key;
                     authorization = encrypt(authStr);
+                    checkAndAddUserInfo(wxData.openid);
                     ctx.body = formatJson(wxData.errcode, authorization);
                 }
                 else {
@@ -280,14 +364,60 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); };
+/**
+ * 若该用户不存在，则添加
+ */
+var checkAndAddUserInfo = function (openid) { return __awaiter(void 0, void 0, void 0, function () {
+    var doc, levels, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, usersModel.findOne({ openid: openid })];
+            case 1:
+                doc = _a.sent();
+                if (doc)
+                    return [2 /*return*/];
+                return [4 /*yield*/, generateLevels()];
+            case 2:
+                levels = _a.sent();
+                console.log('levels', levels);
+                return [4 /*yield*/, usersModel.create({
+                        openid: openid,
+                        levels: levels,
+                        level: 1
+                    })];
+            case 3:
+                result = _a.sent();
+                console.log('add result', result);
+                return [2 /*return*/];
+        }
+    });
+}); };
+/**
+ * 生成关卡信息
+ */
+var generateLevels = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var count, arr;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, levelsModel.count({})];
+            case 1:
+                count = _a.sent();
+                arr = Array.from({ length: count }, function () { return 4; });
+                arr[0] = 0;
+                return [2 /*return*/, JSON.stringify(arr)];
+        }
+    });
+}); };
 
 var Router$1 = require('koa-router');
 var sudokuRouter = new Router$1();
 sudokuRouter
     .get('/user', find$1)
+    .post('/user', save$1)
     .get('/level', find)
+    .get('/level/:level', findOne)
     .post('/level', save)
-    .post('/login', login$1);
+    .post('/login', login);
 
 var Router$2 = require('koa-router');
 var routers = new Router$2();

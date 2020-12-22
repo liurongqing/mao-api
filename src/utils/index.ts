@@ -23,3 +23,8 @@ export const decrypt = (word: string) => {
   const bytes = CryptoJS.AES.decrypt(word, key);
   return bytes.toString(CryptoJS.enc.Utf8);
 };
+
+export const getOpenid = (str: string) => {
+  if (!str) return '';
+  return decrypt(str).split('-')[0];
+};
