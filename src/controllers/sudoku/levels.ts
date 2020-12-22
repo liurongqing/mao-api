@@ -16,7 +16,7 @@ export const findOne = async (ctx: any) => {
   const openid = getOpenid(authorization);
   const { life }: any = await findLife(openid);
   if (life <= 0) {
-    ctx.body = formatJson(-1, {}); // 无生命值
+    ctx.body = formatJson(0, { life: 0 }); // 无生命值
     return;
   }
 
