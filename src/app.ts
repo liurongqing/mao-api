@@ -1,7 +1,10 @@
 const Koa = require("koa");
 const koaBody = require('koa-body');
+var jwt = require('koa-jwt');
+
 
 import { formatJson } from 'src/utils';
+import { ERROR_CODE } from 'src/const';
 import { routers } from 'src/routers';
 import { db } from 'src/config/database';
 
@@ -22,6 +25,27 @@ app.use(async (ctx: any, next: any) => {
   }
 });
 
+// 无授权处理
+app.use(function (ctx: any, next: any) {
+  return next().catch((err: any) => {
+    if (401 == err.status) {
+      ctx.status = 401;
+      ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null, '未登录');
+    } else {
+      throw err;
+    }
+  });
+});
+
+// app.use(jwt({ secret: 'shared-secret', passthrough: false })
+//   .unless({
+//     path:
+//       [
+//         /^\/sudoku/,
+//         /^\/admin\/login/,
+//       ],
+//   }));
+
 app.use(koaBody());
 app.use(routers.routes()).use(routers.allowedMethods());
 
@@ -29,8 +53,9 @@ app.on('error', (err: any) => {
   console.error(err.message);
 });
 
+// 不存在
 app.use(async (ctx: any) => {
-  ctx.body = formatJson(-2, '404');
+  ctx.body = formatJson(ERROR_CODE.NOT_FOUND, null);
 });
 
 app.listen(9001);

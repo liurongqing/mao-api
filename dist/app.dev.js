@@ -72,6 +72,19 @@ function __generator(thisArg, body) {
     }
 }
 
+var WX_BASE_PATH = 'https://api.weixin.qq.com';
+var APP_ID = 'wx6ef1e85ccdd6b748';
+var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
+var LIFE = 3;
+/**
+ * 错误码
+ */
+var ERROR_CODE = {
+    UNAUTHORIZED: -401,
+    NOT_FOUND: -404 // 接口不存在
+};
+var SUCCESS_CODE = 0;
+
 /**
  *
  * @param code 数字
@@ -79,7 +92,7 @@ function __generator(thisArg, body) {
  * @param msg 返回信息
  */
 var formatJson = function (code, data, msg) {
-    if (code === void 0) { code = 0; }
+    if (code === void 0) { code = SUCCESS_CODE; }
     if (data === void 0) { data = {}; }
     if (msg === void 0) { msg = ''; }
     return {
@@ -103,87 +116,7 @@ var getOpenid = function (str) {
 };
 
 var Schema = mongoose.Schema;
-var adminModel = mongoose.model('mao_admin', new Schema({
-    email: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    // nickname: String, // 昵称
-    password: {
-        type: String,
-        required: true
-    },
-    status: {
-        type: Number,
-        default: 1,
-        enum: [0, 1]
-    }
-    // role: {
-    //   type: Array
-    // }, // 所属角色
-    // isDeleted: {
-    //   type: Number,
-    //   default: 0,
-    //   trim: true,
-    //   enum: [0, 1]
-    // }
-}, { collection: 'mao_admin', versionKey: false, timestamps: true }).index({ username: 1, isDeleted: -1 }, { unique: true }));
-
-// import { json, filterEmptyField } from '@/utils'
-// import { pagination, errcode } from '@/const'
-var AdminController = {
-    // get 查询列表
-    find: function (ctx) {
-        return __awaiter(this, void 0, void 0, function () {
-            var condition, fields, result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        condition = { isDeleted: 0 };
-                        fields = '_id email status';
-                        return [4 /*yield*/, adminModel.find(condition, fields)
-                                .sort({ createdAt: -1 })];
-                    case 1:
-                        result = _a.sent();
-                        // const result = await Promise.all([
-                        //   // Model.countDocuments(condition),
-                        //   Model.find(condition, fields)
-                        //     .sort({ createdAt: -1 })
-                        // ]);
-                        // const [total, list] = result;
-                        ctx.body = formatJson(200, result);
-                        return [2 /*return*/];
-                }
-            });
-        });
-    },
-};
-
-var Router = require('koa-router');
-var adminRouter = new Router();
-adminRouter
-    .get('/system/admin', AdminController.find);
-
-var Schema$1 = mongoose.Schema;
-var levelsModel = mongoose.model('levels', new Schema$1({
-    level: Number,
-    topic: String,
-    answer: String,
-    type: {
-        type: Number,
-        default: 4,
-        enum: [4, 9]
-    }
-}, { collection: 'levels', versionKey: false, timestamps: true }));
-
-var WX_BASE_PATH = 'https://api.weixin.qq.com';
-var APP_ID = 'wx6ef1e85ccdd6b748';
-var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
-var LIFE = 3;
-
-var Schema$2 = mongoose.Schema;
-var usersModel = mongoose.model('users', new Schema$2({
+var usersModel = mongoose.model('users', new Schema({
     openid: String,
     level: Number,
     life: {
@@ -203,8 +136,56 @@ var usersModel = mongoose.model('users', new Schema$2({
     province: String // 省
 }, { collection: 'users', versionKey: false, timestamps: true }));
 
-// 获取列表
+var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        console.log(ctx.request.body);
+        ctx.body = formatJson(0, 1);
+        return [2 /*return*/];
+    });
+}); };
+// 查询所有信息
 var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var fields, authorization, openid, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                fields = '_id levels level life';
+                authorization = ctx.request.header.authorization;
+                openid = getOpenid(authorization);
+                if (!(authorization && openid)) return [3 /*break*/, 2];
+                return [4 /*yield*/, usersModel.findOne({ openid: openid }, fields)];
+            case 1:
+                result = _a.sent();
+                ctx.body = formatJson(SUCCESS_CODE, result);
+                return [3 /*break*/, 3];
+            case 2:
+                ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null);
+                _a.label = 3;
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+
+var Router = require('koa-router');
+var adminRouter = new Router();
+adminRouter
+    .get('/user', find)
+    .post('/login', login);
+
+var Schema$1 = mongoose.Schema;
+var levelsModel = mongoose.model('levels', new Schema$1({
+    level: Number,
+    topic: String,
+    answer: String,
+    type: {
+        type: Number,
+        default: 4,
+        enum: [4, 9]
+    }
+}, { collection: 'levels', versionKey: false, timestamps: true }));
+
+// 获取列表
+var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -311,7 +292,7 @@ var decLife = function (openid, life) { return __awaiter(void 0, void 0, void 0,
 }); };
 
 // 查询所有信息
-var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var find$2 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, authorization, openid, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -392,7 +373,7 @@ var levelsSuccess = function (ctx) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 
-var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var code, url, wxData, authStr, authorization;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -463,13 +444,13 @@ var generateLevels = function () { return __awaiter(void 0, void 0, void 0, func
 var Router$1 = require('koa-router');
 var sudokuRouter = new Router$1();
 sudokuRouter
-    .get('/user', find$1)
+    .get('/user', find$2)
     .post('/user', save$1)
     .post('/levels-success', levelsSuccess)
-    .get('/level', find)
+    .get('/level', find$1)
     .get('/level/:level', findOne)
     .post('/level', save)
-    .post('/login', login);
+    .post('/login', login$1);
 
 var Router$2 = require('koa-router');
 var routers = new Router$2();
@@ -504,6 +485,7 @@ var db = (function () {
 
 var Koa = require("koa");
 var koaBody = require('koa-body');
+var jwt = require('koa-jwt');
 var app = new Koa();
 // 数据库连接
 db();
@@ -526,14 +508,35 @@ app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); });
+// 无授权处理
+app.use(function (ctx, next) {
+    return next().catch(function (err) {
+        if (401 == err.status) {
+            ctx.status = 401;
+            ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null, '未登录');
+        }
+        else {
+            throw err;
+        }
+    });
+});
+// app.use(jwt({ secret: 'shared-secret', passthrough: false })
+//   .unless({
+//     path:
+//       [
+//         /^\/sudoku/,
+//         /^\/admin\/login/,
+//       ],
+//   }));
 app.use(koaBody());
 app.use(routers.routes()).use(routers.allowedMethods());
 app.on('error', function (err) {
     console.error(err.message);
 });
+// 不存在
 app.use(function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        ctx.body = formatJson(-2, '404');
+        ctx.body = formatJson(ERROR_CODE.NOT_FOUND, null);
         return [2 /*return*/];
     });
 }); });

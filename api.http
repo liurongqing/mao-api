@@ -1,9 +1,22 @@
-@host = http://127.0.0.1:9001/sudoku
+@host = 127.0.0.1:9001
 
-# 获取关卡列表
-GET {{host}}/level HTTP/1.1
+## 后台相关接口
+### 登录
+POST /admin/login HTTP/1.1
+Host: {{host}}
+Cache-Control: no-Cache
 content-type: application/json
 
 {
-
+  "username": "liurongqing",
+  "password": "123456"
 }
+
+## 数独库相关接口
+### 获取关卡列表
+GET /sudoku/level HTTP/1.1
+Host: {{host}}
+Cache-Control: no-Cache
+content-type: application/json
+
+

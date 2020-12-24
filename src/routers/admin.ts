@@ -1,9 +1,9 @@
 const Router = require('koa-router');
 export const adminRouter = new Router();
-
-import AdminController from 'src/controllers/system/admin';
+import { adminController } from 'src/controllers/admin';
 
 adminRouter
-  .get('/system/admin', AdminController.find);
+  .get('/user', adminController.find)
+  .post('/login', adminController.login);
 
 

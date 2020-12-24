@@ -1,11 +1,13 @@
 import * as CryptoJS from "crypto-js";
+import { SUCCESS_CODE } from "src/const";
+
 /**
  *
  * @param code 数字
  * @param data 返回数据
  * @param msg 返回信息
  */
-export const formatJson = (code = 0, data = {}, msg = '') => {
+export const formatJson = (code = SUCCESS_CODE, data = {}, msg = '') => {
   return {
     code,
     data,

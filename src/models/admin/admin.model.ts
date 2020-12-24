@@ -2,10 +2,10 @@ import * as mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 export const adminModel = mongoose.model(
-  'mao_admin',
+  'admin',
   new Schema(
     {
-      email: {
+      username: {
         type: String,
         required: true,
         trim: true
@@ -30,6 +30,6 @@ export const adminModel = mongoose.model(
       //   enum: [0, 1]
       // }
     },
-    { collection: 'mao_admin', versionKey: false, timestamps: true }
+    { collection: 'admin', versionKey: false, timestamps: true }
   ).index({ username: 1, isDeleted: -1 }, { unique: true })
 );
