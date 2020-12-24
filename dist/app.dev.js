@@ -230,13 +230,16 @@ var findOne = function (ctx) { return __awaiter(void 0, void 0, void 0, function
             case 1:
                 life = (_a.sent()).life;
                 if (life <= 0) {
-                    ctx.body = formatJson(-1, {}); // 无生命值
+                    ctx.body = formatJson(0, { life: 0 }); // 无生命值
                     return [2 /*return*/];
                 }
                 fields = '_id type topic answer';
                 return [4 /*yield*/, levelsModel.findOne({ level: level }, fields)];
             case 2:
                 result = _a.sent();
+                return [4 /*yield*/, decLife(openid, life)];
+            case 3:
+                _a.sent();
                 ctx.body = formatJson(0, result);
                 return [2 /*return*/];
         }
@@ -295,7 +298,19 @@ var findLife = function (openid) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
+// 减一个星
+var decLife = function (openid, life) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, usersModel.updateOne({ openid: openid }, { $set: { life: life - 1 } })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
 
+// 查询所有信息
 var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, authorization, openid, result;
     return __generator(this, function (_a) {
@@ -312,6 +327,7 @@ var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
+// 保存更新用户数据
 var save$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var userInfo, authorization, openid, result, err_1;
     return __generator(this, function (_a) {
@@ -337,6 +353,41 @@ var save$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
                 ctx.body = formatJson(-100, err_1, '失败了');
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
+        }
+    });
+}); };
+// 成功更新用户关卡数据
+var levelsSuccess = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, level, stars, authorization, openid, levels, result;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = ctx.request.body, level = _a.level, stars = _a.stars;
+                authorization = ctx.request.header.authorization;
+                openid = getOpenid(authorization);
+                if (!openid) return [3 /*break*/, 3];
+                return [4 /*yield*/, usersModel.findOne({ openid: openid }, 'levels')];
+            case 1:
+                levels = (_b.sent()).levels;
+                levels = JSON.parse(levels);
+                if (levels[level - 1] < stars) {
+                    levels[level - 1] = stars;
+                }
+                if (levels[level] == 4) {
+                    levels[level] = 0;
+                }
+                levels = JSON.stringify(levels);
+                return [4 /*yield*/, usersModel.updateOne({ openid: openid }, {
+                        $set: {
+                            level: level,
+                            levels: levels
+                        }
+                    })];
+            case 2:
+                result = _b.sent();
+                ctx.body = formatJson(0, result);
+                _b.label = 3;
+            case 3: return [2 /*return*/];
         }
     });
 }); };
@@ -414,6 +465,7 @@ var sudokuRouter = new Router$1();
 sudokuRouter
     .get('/user', find$1)
     .post('/user', save$1)
+    .post('/levels-success', levelsSuccess)
     .get('/level', find)
     .get('/level/:level', findOne)
     .post('/level', save)

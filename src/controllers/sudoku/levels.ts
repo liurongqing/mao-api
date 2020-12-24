@@ -22,6 +22,7 @@ export const findOne = async (ctx: any) => {
 
   const fields = '_id type topic answer';
   const result = await levelsModel.findOne({ level }, fields);
+  await decLife(openid, life);
   ctx.body = formatJson(0, result);
 };
 
@@ -57,4 +58,9 @@ export const findLife = async (openid: string) => {
   const fields = '_id life';
   const result = await usersModel.findOne({ openid }, fields);
   return result;
+};
+
+// 减一个星
+export const decLife = async (openid: string, life: number) => {
+  await usersModel.updateOne({ openid }, { $set: { life: life - 1 } });
 };
