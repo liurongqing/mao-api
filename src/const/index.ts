@@ -11,7 +11,10 @@ export const LIFE = 3;
 
 export const ERROR_CODE = {
   UNAUTHORIZED: -401, // 未授权
-  NOT_FOUND: -404 // 接口不存在
+  NOT_FOUND: -404, // 接口不存在
+  LOGIN_FAIL: -405, // 登录失败
 };
 
 export const SUCCESS_CODE = 0;
+
+export const JWT_SECRET = 'yjapsige__909320';

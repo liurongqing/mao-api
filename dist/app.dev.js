@@ -81,9 +81,11 @@ var LIFE = 3;
  */
 var ERROR_CODE = {
     UNAUTHORIZED: -401,
-    NOT_FOUND: -404 // 接口不存在
+    NOT_FOUND: -404,
+    LOGIN_FAIL: -405,
 };
 var SUCCESS_CODE = 0;
+var JWT_SECRET = 'yjapsige__909320';
 
 /**
  *
@@ -136,11 +138,72 @@ var usersModel = mongoose.model('users', new Schema({
     province: String // 省
 }, { collection: 'users', versionKey: false, timestamps: true }));
 
+var Schema$1 = mongoose.Schema;
+var adminModel = mongoose.model('admin', new Schema$1({
+    username: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    // nickname: String, // 昵称
+    password: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: Number,
+        default: 1,
+        enum: [0, 1]
+    }
+    // role: {
+    //   type: Array
+    // }, // 所属角色
+    // isDeleted: {
+    //   type: Number,
+    //   default: 0,
+    //   trim: true,
+    //   enum: [0, 1]
+    // }
+}, { collection: 'admin', versionKey: false, timestamps: true }).index({ username: 1, isDeleted: -1 }, { unique: true }));
+
+var jsonwebtoken = require('jsonwebtoken');
+var register = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, username, password, result;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = ctx.request.query, username = _a.username, password = _a.password;
+                return [4 /*yield*/, adminModel.create({
+                        username: username,
+                        password: password
+                    })];
+            case 1:
+                result = _b.sent();
+                ctx.body = formatJson(0, result);
+                return [2 /*return*/];
+        }
+    });
+}); };
 var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        console.log(ctx.request.body);
-        ctx.body = formatJson(0, 1);
-        return [2 /*return*/];
+    var _a, username, password, result;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = ctx.request.body, username = _a.username, password = _a.password;
+                return [4 /*yield*/, adminModel.findOne({ username: username, password: password, status: 1 }, 'username')];
+            case 1:
+                result = _b.sent();
+                if (result) {
+                    ctx.body = formatJson(SUCCESS_CODE, jsonwebtoken.sign({
+                        data: username,
+                        exp: Math.floor(Date.now() / 1000) + (60 * 60),
+                    }, JWT_SECRET));
+                }
+                else {
+                    ctx.body = formatJson(ERROR_CODE.LOGIN_FAIL, null);
+                }
+                return [2 /*return*/];
+        }
     });
 }); };
 // 查询所有信息
@@ -170,10 +233,11 @@ var Router = require('koa-router');
 var adminRouter = new Router();
 adminRouter
     .get('/user', find)
-    .post('/login', login);
+    .post('/login', login)
+    .get('/register', register); // 临时注册
 
-var Schema$1 = mongoose.Schema;
-var levelsModel = mongoose.model('levels', new Schema$1({
+var Schema$2 = mongoose.Schema;
+var levelsModel = mongoose.model('levels', new Schema$2({
     level: Number,
     topic: String,
     answer: String,
@@ -520,7 +584,7 @@ app.use(function (ctx, next) {
         }
     });
 });
-// app.use(jwt({ secret: 'shared-secret', passthrough: false })
+// app.use(jwt({ secret: JWT_SECRET, passthrough: false })
 //   .unless({
 //     path:
 //       [

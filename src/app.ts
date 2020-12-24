@@ -4,7 +4,7 @@ var jwt = require('koa-jwt');
 
 
 import { formatJson } from 'src/utils';
-import { ERROR_CODE } from 'src/const';
+import { ERROR_CODE,JWT_SECRET } from 'src/const';
 import { routers } from 'src/routers';
 import { db } from 'src/config/database';
 
@@ -37,7 +37,7 @@ app.use(function (ctx: any, next: any) {
   });
 });
 
-// app.use(jwt({ secret: 'shared-secret', passthrough: false })
+// app.use(jwt({ secret: JWT_SECRET, passthrough: false })
 //   .unless({
 //     path:
 //       [

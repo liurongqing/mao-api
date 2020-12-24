@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.21.0",
     "crypto-js": "^4.0.0",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-jwt": "^4.0.0",

@@ -12,6 +12,14 @@ content-type: application/json
   "password": "123456"
 }
 
+### 注册
+GET /admin/register
+  ?username=liurongqing
+  &password=123456
+Host: {{host}}
+Cache-Control: no-Cache
+content-type: application/json
+
 ## 数独库相关接口
 ### 获取关卡列表
 GET /sudoku/level HTTP/1.1

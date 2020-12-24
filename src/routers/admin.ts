@@ -4,6 +4,7 @@ import { adminController } from 'src/controllers/admin';
 
 adminRouter
   .get('/user', adminController.find)
-  .post('/login', adminController.login);
+  .post('/login', adminController.login)
+  .get('/register', adminController.register); // 临时注册
 
 
