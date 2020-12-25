@@ -30,7 +30,6 @@ export const decrypt = (word: string) => {
 
 export const getOpenid = (str: string) => {
   if (!str) return '';
-  const data = jsonwebtoken.verify(str, JWT_SECRET);
-  console.log('jwt data', data);
-  return data.split('-')[0];
+  const data = jsonwebtoken.verify(str.replace('Bearer ', ''), JWT_SECRET);
+  return data.data.split('-')[0];
 };

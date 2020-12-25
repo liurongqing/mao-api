@@ -27,13 +27,3 @@ Host: {{host}}
 Cache-Control: no-Cache
 content-type: application/json
 Authorization: {{Authorization}}
-
-## 数独库游戏相关接口
-### 获取关卡列表
-GET /sudoku/level HTTP/1.1
-Host: {{host}}
-Cache-Control: no-Cache
-content-type: application/json
-Authorization: {{Authorization}}
-
-

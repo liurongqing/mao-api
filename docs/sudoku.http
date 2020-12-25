@@ -1,0 +1,13 @@
+@host = 127.0.0.1:9001
+@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoibGl1cm9uZ3FpbmciLCJleHAiOjE2MDg4ODU5MjUsImlhdCI6MTYwODg4MjMyNX0.Q3mVpE4f-O6Hj-U3VY39akkQHVz1agaQuTAcjBCqBSU
+
+## 数独库游戏相关接口
+
+### 获取关卡列表
+GET /sudoku/level HTTP/1.1
+Host: {{host}}
+Cache-Control: no-Cache
+content-type: application/json
+Authorization: {{Authorization}}
+
+

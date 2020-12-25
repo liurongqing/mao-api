@@ -107,9 +107,8 @@ var formatJson = function (code, data, msg) {
 var getOpenid = function (str) {
     if (!str)
         return '';
-    var data = jsonwebtoken.verify(str, JWT_SECRET);
-    console.log('jwt data', data);
-    return data.split('-')[0];
+    var data = jsonwebtoken.verify(str.replace('Bearer ', ''), JWT_SECRET);
+    return data.data.split('-')[0];
 };
 
 var Schema = mongoose.Schema;
@@ -591,6 +590,7 @@ app.use(jwt({ secret: JWT_SECRET, passthrough: false })
     path: [
         // /^\/sudoku/,
         /^\/admin\/login/,
+        /^\/sudoku\/login/,
     ],
 }));
 app.use(koaBody());
