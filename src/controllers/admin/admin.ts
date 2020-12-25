@@ -27,7 +27,6 @@ export const login = async (ctx: any) => {
   }
 };
 
-
 // 查询所有信息
 export const find = async (ctx: any) => {
   const fields = '_id levels level life';

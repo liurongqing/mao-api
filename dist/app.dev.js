@@ -1,6 +1,6 @@
 'use strict';
 
-var CryptoJS = require('crypto-js');
+require('crypto-js');
 var mongoose = require('mongoose');
 var axios = require('axios');
 
@@ -87,6 +87,7 @@ var ERROR_CODE = {
 var SUCCESS_CODE = 0;
 var JWT_SECRET = 'yjapsige__909320';
 
+var jsonwebtoken = require('jsonwebtoken');
 /**
  *
  * @param code 数字
@@ -103,18 +104,12 @@ var formatJson = function (code, data, msg) {
         msg: msg,
     };
 };
-var key = '1234567654321MAO';
-var encrypt = function (word) {
-    return CryptoJS.AES.encrypt(word, key).toString();
-};
-var decrypt = function (word) {
-    var bytes = CryptoJS.AES.decrypt(word, key);
-    return bytes.toString(CryptoJS.enc.Utf8);
-};
 var getOpenid = function (str) {
     if (!str)
         return '';
-    return decrypt(str).split('-')[0];
+    var data = jsonwebtoken.verify(str, JWT_SECRET);
+    console.log('jwt data', data);
+    return data.split('-')[0];
 };
 
 var Schema = mongoose.Schema;
@@ -166,7 +161,7 @@ var adminModel = mongoose.model('admin', new Schema$1({
     // }
 }, { collection: 'admin', versionKey: false, timestamps: true }).index({ username: 1, isDeleted: -1 }, { unique: true }));
 
-var jsonwebtoken = require('jsonwebtoken');
+var jsonwebtoken$1 = require('jsonwebtoken');
 var register = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, username, password, result;
     return __generator(this, function (_b) {
@@ -194,7 +189,7 @@ var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function (
             case 1:
                 result = _b.sent();
                 if (result) {
-                    ctx.body = formatJson(SUCCESS_CODE, jsonwebtoken.sign({
+                    ctx.body = formatJson(SUCCESS_CODE, jsonwebtoken$1.sign({
                         data: username,
                         exp: Math.floor(Date.now() / 1000) + (60 * 60),
                     }, JWT_SECRET));
@@ -229,13 +224,6 @@ var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function ()
     });
 }); };
 
-var Router = require('koa-router');
-var adminRouter = new Router();
-adminRouter
-    .get('/user', find)
-    .post('/login', login)
-    .get('/register', register); // 临时注册
-
 var Schema$2 = mongoose.Schema;
 var levelsModel = mongoose.model('levels', new Schema$2({
     level: Number,
@@ -258,33 +246,6 @@ var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
                 return [4 /*yield*/, levelsModel.find({}, fields)];
             case 1:
                 result = _a.sent();
-                ctx.body = formatJson(0, result);
-                return [2 /*return*/];
-        }
-    });
-}); };
-var findOne = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var level, authorization, openid, life, fields, result;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                level = ctx.params.level;
-                authorization = ctx.request.header.authorization;
-                openid = getOpenid(authorization);
-                return [4 /*yield*/, findLife(openid)];
-            case 1:
-                life = (_a.sent()).life;
-                if (life <= 0) {
-                    ctx.body = formatJson(0, { life: 0 }); // 无生命值
-                    return [2 /*return*/];
-                }
-                fields = '_id type topic answer';
-                return [4 /*yield*/, levelsModel.findOne({ level: level }, fields)];
-            case 2:
-                result = _a.sent();
-                return [4 /*yield*/, decLife(openid, life)];
-            case 3:
-                _a.sent();
                 ctx.body = formatJson(0, result);
                 return [2 /*return*/];
         }
@@ -326,6 +287,43 @@ var save = function (ctx) { return __awaiter(void 0, void 0, void 0, function ()
                 ctx.body = formatJson(-100, err_1, '失败了');
                 return [3 /*break*/, 8];
             case 8: return [2 /*return*/];
+        }
+    });
+}); };
+
+var Router = require('koa-router');
+var adminRouter = new Router();
+adminRouter
+    .get('/user', find)
+    .get('/level', find$1)
+    .post('/level', save)
+    .post('/login', login)
+    .get('/register', register); // 临时注册
+
+var findOne = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var level, authorization, openid, life, fields, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                level = ctx.params.level;
+                authorization = ctx.request.header.authorization;
+                openid = getOpenid(authorization);
+                return [4 /*yield*/, findLife(openid)];
+            case 1:
+                life = (_a.sent()).life;
+                if (life <= 0) {
+                    ctx.body = formatJson(0, { life: 0 }); // 无生命值
+                    return [2 /*return*/];
+                }
+                fields = '_id type topic answer';
+                return [4 /*yield*/, levelsModel.findOne({ level: level }, fields)];
+            case 2:
+                result = _a.sent();
+                return [4 /*yield*/, decLife(openid, life)];
+            case 3:
+                _a.sent();
+                ctx.body = formatJson(0, result);
+                return [2 /*return*/];
         }
     });
 }); };
@@ -437,6 +435,7 @@ var levelsSuccess = function (ctx) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 
+var jsonwebtoken$2 = require('jsonwebtoken');
 var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var code, url, wxData, authStr, authorization;
     return __generator(this, function (_a) {
@@ -449,7 +448,10 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
                 wxData = (_a.sent()).data;
                 if (wxData.openid) {
                     authStr = wxData.openid + '-' + wxData.session_key;
-                    authorization = encrypt(authStr);
+                    authorization = jsonwebtoken$2.sign({
+                        data: authStr,
+                        exp: Math.floor(Date.now() / 1000) + (60 * 60),
+                    }, JWT_SECRET);
                     checkAndAddUserInfo(wxData.openid);
                     ctx.body = formatJson(wxData.errcode, authorization);
                 }
@@ -511,9 +513,9 @@ sudokuRouter
     .get('/user', find$2)
     .post('/user', save$1)
     .post('/levels-success', levelsSuccess)
-    .get('/level', find$1)
+    // .get('/level', levelsController.find)
     .get('/level/:level', findOne)
-    .post('/level', save)
+    // .post('/level', levelsController.save)
     .post('/login', login$1);
 
 var Router$2 = require('koa-router');
@@ -559,7 +561,7 @@ app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function
         switch (_a.label) {
             case 0:
                 ctx.set('Access-Control-Allow-Origin', '*');
-                ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+                ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
                 ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
                 if (!(ctx.method == 'OPTIONS')) return [3 /*break*/, 1];
                 ctx.body = 200;
@@ -572,26 +574,25 @@ app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); });
-// 无授权处理
+// 无授权处理, 未登录，或过期
 app.use(function (ctx, next) {
     return next().catch(function (err) {
         if (401 == err.status) {
             ctx.status = 401;
-            ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null, '未登录');
+            ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null, '');
         }
         else {
             throw err;
         }
     });
 });
-// app.use(jwt({ secret: JWT_SECRET, passthrough: false })
-//   .unless({
-//     path:
-//       [
-//         /^\/sudoku/,
-//         /^\/admin\/login/,
-//       ],
-//   }));
+app.use(jwt({ secret: JWT_SECRET, passthrough: false })
+    .unless({
+    path: [
+        // /^\/sudoku/,
+        /^\/admin\/login/,
+    ],
+}));
 app.use(koaBody());
 app.use(routers.routes()).use(routers.allowedMethods());
 app.on('error', function (err) {

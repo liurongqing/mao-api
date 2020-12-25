@@ -16,7 +16,7 @@ db();
 // 跨域， 需要做开发环境的区分
 app.use(async (ctx: any, next: any) => {
   ctx.set('Access-Control-Allow-Origin', '*');
-  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
   ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   if (ctx.method == 'OPTIONS') {
     ctx.body = 200;
@@ -25,26 +25,26 @@ app.use(async (ctx: any, next: any) => {
   }
 });
 
-// 无授权处理
+// 无授权处理, 未登录，或过期
 app.use(function (ctx: any, next: any) {
   return next().catch((err: any) => {
     if (401 == err.status) {
       ctx.status = 401;
-      ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null, '未登录');
+      ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null, '');
     } else {
       throw err;
     }
   });
 });
 
-// app.use(jwt({ secret: JWT_SECRET, passthrough: false })
-//   .unless({
-//     path:
-//       [
-//         /^\/sudoku/,
-//         /^\/admin\/login/,
-//       ],
-//   }));
+app.use(jwt({ secret: JWT_SECRET, passthrough: false })
+  .unless({
+    path:
+      [
+        // /^\/sudoku/,
+        /^\/admin\/login/,
+      ],
+  }));
 
 app.use(koaBody());
 app.use(routers.routes()).use(routers.allowedMethods());

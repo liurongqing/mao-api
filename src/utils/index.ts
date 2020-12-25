@@ -1,5 +1,7 @@
+const jsonwebtoken = require('jsonwebtoken');
+
 import * as CryptoJS from "crypto-js";
-import { SUCCESS_CODE } from "src/const";
+import { SUCCESS_CODE, JWT_SECRET } from "src/const";
 
 /**
  *
@@ -28,5 +30,7 @@ export const decrypt = (word: string) => {
 
 export const getOpenid = (str: string) => {
   if (!str) return '';
-  return decrypt(str).split('-')[0];
+  const data = jsonwebtoken.verify(str, JWT_SECRET);
+  console.log('jwt data', data);
+  return data.split('-')[0];
 };
