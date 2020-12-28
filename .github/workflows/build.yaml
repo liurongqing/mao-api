@@ -21,8 +21,6 @@ jobs:
       run: yarn --frozen-lockfile
     - name: build file
       run: yarn build --prod
-    - name: tar files
-        cp -R dist/app.js package.json ./build
     - name: deploy file to server
       uses: appleboy/scp-action@master
       env:
