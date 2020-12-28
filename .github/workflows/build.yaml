@@ -21,10 +21,14 @@ jobs:
       run: yarn --frozen-lockfile
     - name: build file
       run: yarn build --prod
+    - name: delete node_modules
+        run: rm -rf node_modules
+    - name: reinstall node_modules
+        run: yarn install --production
     - name: copy to directory
       run: |
         mkdir build
-        cp -R package.json dist/app.js build
+        cp -R package.json node_modules dist/app.js build
     - name: deploy file to server
       uses: appleboy/scp-action@master
       env:
