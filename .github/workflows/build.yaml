@@ -29,7 +29,7 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.KEY }}
       with:
-        source: "./dist/app.js, ./package.json"
+        source: "dist/app.js, package.json"
         target: "/home/liurongqing/api"
         strip_components: 1
         rm: true
