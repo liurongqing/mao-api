@@ -24,7 +24,7 @@ jobs:
     - name: tar files
       run: |
         mkdir ../build
-        cp -R dist/app.js node_modules package.json ../build
+        cp -R dist/app.js package.json ../build
         tar -cvf deploy.tar ../build/
     - name: deploy file to server
       uses: appleboy/scp-action@master
