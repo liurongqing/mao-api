@@ -22,16 +22,13 @@ jobs:
     - name: build file
       run: yarn build --prod
     - name: deploy file to server
-      uses: appleboy/scp-action@master
-      env:
-        HOST: ${{ secrets.HOST }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.KEY }}
+      uses: burnett01/rsync-deployments@4.1
       with:
-        source: "dist/app.js, ."
-        target: "/home/liurongqing/api"
-        strip_components: 1
-        rm: true
+        switches: -avzr --delete
+        path: ./dist
+        remote_path: /home/liurongqing/api
+        remote_host: ${{ secrets.HOST }}
+        remote_user: ${{ secrets.USERNAME }}
+        remote_key: ${{ secrets.KEY }}
     env:
       CI: true
