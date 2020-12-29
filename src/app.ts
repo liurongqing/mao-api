@@ -1,5 +1,5 @@
 const Koa = require("koa");
-const cors = require("koa2-cors");
+const cors = require("@koa/cors");
 const koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 
@@ -17,7 +17,6 @@ db();
 // 跨域设置
 app.use(cors({
   origin: function (ctx: any) {
-    console.log(ctx.request.header);
     const { origin } = ctx.request.header;
     if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
       return origin;

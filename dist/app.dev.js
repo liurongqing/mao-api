@@ -549,7 +549,7 @@ var db = (function () {
 });
 
 var Koa = require("koa");
-var cors = require("koa2-cors");
+var cors = require("@koa/cors");
 var koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 var app = new Koa();
@@ -558,7 +558,6 @@ db();
 // 跨域设置
 app.use(cors({
     origin: function (ctx) {
-        console.log(ctx.request.header);
         var origin = ctx.request.header.origin;
         if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
             return origin;
