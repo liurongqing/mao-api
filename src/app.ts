@@ -13,6 +13,7 @@ const app = new Koa();
 // 数据库连接
 db();
 
+// 跨域设置
 app.use(async (ctx: any, next: any) => {
   const { origin } = ctx.request.header;
   if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
