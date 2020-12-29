@@ -4,7 +4,7 @@ var jwt = require('koa-jwt');
 
 
 import { formatJson } from 'src/utils';
-import { ERROR_CODE,JWT_SECRET } from 'src/const';
+import { ERROR_CODE, JWT_SECRET } from 'src/const';
 import { routers } from 'src/routers';
 import { db } from 'src/config/database';
 
@@ -15,9 +15,12 @@ db();
 
 // 跨域， 需要做开发环境的区分
 app.use(async (ctx: any, next: any) => {
-  ctx.set('Access-Control-Allow-Origin', '*');
-  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
-  ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  const { origin } = ctx.request.header;
+  if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com/'].includes(origin)) {
+    ctx.set('Access-Control-Allow-Origin', origin);
+    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+    ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  }
   if (ctx.method == 'OPTIONS') {
     ctx.body = 200;
   } else {
