@@ -554,7 +554,7 @@ var jwt = require('koa-jwt');
 var app = new Koa();
 // 数据库连接
 db();
-// 跨域设置
+// 跨域设置12
 app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
     var origin;
     return __generator(this, function (_a) {
