@@ -25,8 +25,10 @@ jobs:
       run: yarn --frozen-lockfile
     - name: build file # 编译生成 app.js
       run: yarn build --prod
-    - name: build tar
-      run: tar -zcvf release.tgz pm2.api.js dist/app.js package.json
+    - name: build directory
+      run: |
+        mkdir directory
+        cp pm2.api.js dist/app.js package.json directory
       # 把app.js package.json等文件，打包压缩为release.tgz
 
     # 第三步 发布 release
@@ -62,7 +64,7 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.KEY }}
       with:
-        source: 'release.tgz'
+        source: 'directory'
         target: "/home/liurongqing/api"
         strip_components: 1
         rm: true
