@@ -22,9 +22,9 @@ jobs:
     - name: build file
       run: yarn build --prod
     - name: delete node_modules
-        run: rm -rf node_modules
+      run: rm -rf node_modules
     - name: reinstall node_modules
-        run: yarn install --production
+      run: yarn install --production
     - name: copy to directory
       run: |
         mkdir build
