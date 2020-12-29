@@ -1,9 +1,6 @@
 name: 部署后台API
 
-on:
-  push:
-    tags: # 当我们提交代码为tag 是以'v'开头的时候才会触发自动部署到服务端 如 git push tag v0.1.0
-      - 'v*'
+on: [push]
 
 jobs:
   build:
