@@ -1,5 +1,4 @@
 const Koa = require("koa");
-// const cors = require("@koa/cors");
 const koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 
@@ -14,7 +13,6 @@ const app = new Koa();
 // 数据库连接
 db();
 
-// app.use(cors());
 app.use(async (ctx: any, next: any) => {
   const { origin } = ctx.request.header;
   if (['http://127.0.0.1:4200', 'http://localhost:4200', 'https://manage.henmao.com'].includes(origin)) {

@@ -555,13 +555,11 @@ var db = (function () {
 });
 
 var Koa = require("koa");
-// const cors = require("@koa/cors");
 var koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 var app = new Koa();
 // 数据库连接
 db();
-// app.use(cors());
 app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
     var origin;
     return __generator(this, function (_a) {
