@@ -564,6 +564,7 @@ app.use(cors({
         }
         return false;
     },
+    allowHeaders: ['Authorization'],
     exposeHeaders: ['Authorization']
 }));
 // 无授权处理, 未登录，或过期

@@ -23,6 +23,7 @@ app.use(cors({
     }
     return false;
   },
+  allowHeaders: ['Authorization'],
   exposeHeaders: ['Authorization']
 }));
 
