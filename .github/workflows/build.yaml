@@ -64,7 +64,7 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.KEY }}
       with:
-        source: 'directory'
+        source: 'directory/*'
         target: "/home/liurongqing/api"
         strip_components: 1
         rm: true
