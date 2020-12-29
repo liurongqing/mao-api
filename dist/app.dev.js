@@ -554,14 +554,13 @@ var jwt = require('koa-jwt');
 var app = new Koa();
 // 数据库连接
 db();
-// 跨域， 需要做开发环境的区分
 app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
     var origin;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 origin = ctx.request.header.origin;
-                if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com/'].includes(origin)) {
+                if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
                     ctx.set('Access-Control-Allow-Origin', origin);
                     ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
                     ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
