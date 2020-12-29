@@ -26,7 +26,7 @@ jobs:
     - name: build file # 编译生成 app.js
       run: yarn build --prod
     - name: build tar
-      run: tar -zcvf release.tgz pm2.api.json dist/app.js package.json
+      run: tar -zcvf release.tgz pm2.api.js dist/app.js package.json
       # 把app.js package.json等文件，打包压缩为release.tgz
 
     # 第三步 发布 release
