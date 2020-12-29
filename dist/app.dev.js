@@ -549,12 +549,30 @@ var db = (function () {
 });
 
 var Koa = require("koa");
-var cors = require("@koa/cors");
+// const cors = require("@koa/cors");
 var koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 var app = new Koa();
 // 数据库连接
 db();
+app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                ctx.set('Access-Control-Allow-Origin', '*');
+                ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+                ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+                if (!(ctx.method == 'OPTIONS')) return [3 /*break*/, 1];
+                ctx.body = 200;
+                return [3 /*break*/, 3];
+            case 1: return [4 /*yield*/, next()];
+            case 2:
+                _a.sent();
+                _a.label = 3;
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 // 跨域设置
 // app.use(cors({
 //   origin: function (ctx: any) {
