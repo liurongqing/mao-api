@@ -549,34 +549,27 @@ var db = (function () {
 });
 
 var Koa = require("koa");
+var cors = require("@koa/cors");
 var koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 var app = new Koa();
 // 数据库连接
 db();
-// 跨域设置12
-app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var origin;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                origin = ctx.request.header.origin;
-                if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
-                    ctx.set('Access-Control-Allow-Origin', origin);
-                    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
-                    ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-                }
-                if (!(ctx.method == 'OPTIONS')) return [3 /*break*/, 1];
-                ctx.body = 200;
-                return [3 /*break*/, 3];
-            case 1: return [4 /*yield*/, next()];
-            case 2:
-                _a.sent();
-                _a.label = 3;
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// 跨域设置
+app.use(cors());
+// app.use(async (ctx: any, next: any) => {
+//   const { origin } = ctx.request.header;
+//   if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
+//     ctx.set('Access-Control-Allow-Origin', origin);
+//     ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+//     ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+//   }
+//   if (ctx.method == 'OPTIONS') {
+//     ctx.body = 200;
+//   } else {
+//     await next();
+//   }
+// });
 // 无授权处理, 未登录，或过期
 app.use(function (ctx, next) {
     return next().catch(function (err) {

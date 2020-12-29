@@ -1,4 +1,5 @@
 const Koa = require("koa");
+const cors = require("@koa/cors");
 const koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 
@@ -13,20 +14,21 @@ const app = new Koa();
 // 数据库连接
 db();
 
-// 跨域设置12
-app.use(async (ctx: any, next: any) => {
-  const { origin } = ctx.request.header;
-  if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
-    ctx.set('Access-Control-Allow-Origin', origin);
-    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
-    ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-  }
-  if (ctx.method == 'OPTIONS') {
-    ctx.body = 200;
-  } else {
-    await next();
-  }
-});
+// 跨域设置
+app.use(cors());
+// app.use(async (ctx: any, next: any) => {
+//   const { origin } = ctx.request.header;
+//   if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
+//     ctx.set('Access-Control-Allow-Origin', origin);
+//     ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+//     ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+//   }
+//   if (ctx.method == 'OPTIONS') {
+//     ctx.body = 200;
+//   } else {
+//     await next();
+//   }
+// });
 
 // 无授权处理, 未登录，或过期
 app.use(function (ctx: any, next: any) {
