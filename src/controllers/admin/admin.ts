@@ -2,7 +2,7 @@ const jsonwebtoken = require('jsonwebtoken');
 
 import { usersModel } from 'src/models/sudoku/users.model';
 import { adminModel } from 'src/models/admin/admin.model';
-import { formatJson, decrypt, getOpenid } from 'src/utils';
+import { formatJson, getOpenid } from 'src/utils';
 import { ERROR_CODE, SUCCESS_CODE, JWT_SECRET } from 'src/const';
 
 export const register = async (ctx: any) => {

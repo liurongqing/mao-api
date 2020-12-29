@@ -1,5 +1,5 @@
 import { usersModel } from 'src/models/sudoku/users.model';
-import { formatJson, decrypt, getOpenid } from 'src/utils';
+import { formatJson, getOpenid } from 'src/utils';
 
 // 查询所有信息
 export const find = async (ctx: any) => {

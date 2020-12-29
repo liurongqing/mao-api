@@ -1,6 +1,6 @@
 const jsonwebtoken = require('jsonwebtoken');
 import axios from 'axios';
-import { formatJson, encrypt, decrypt } from 'src/utils';
+import { formatJson } from 'src/utils';
 import { APP_ID, APP_SECRET, WX_BASE_PATH, JWT_SECRET} from 'src/const';
 import { usersModel } from '../../models/sudoku/users.model';
 import { levelsModel } from '../../models/sudoku/levels.model';

@@ -1,6 +1,5 @@
 'use strict';
 
-require('crypto-js');
 var mongoose = require('mongoose');
 var axios = require('axios');
 
@@ -104,6 +103,13 @@ var formatJson = function (code, data, msg) {
         msg: msg,
     };
 };
+// export const encrypt = (word: string) => {
+//   return CryptoJS.AES.encrypt(word, key).toString();
+// };
+// export const decrypt = (word: string) => {
+//   const bytes = CryptoJS.AES.decrypt(word, key);
+//   return bytes.toString(CryptoJS.enc.Utf8);
+// };
 var getOpenid = function (str) {
     if (!str)
         return '';
@@ -556,12 +562,16 @@ var app = new Koa();
 // 数据库连接
 db();
 app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var origin;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                ctx.set('Access-Control-Allow-Origin', '*');
-                ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
-                ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+                origin = ctx.request.header.origin;
+                if (['http://127.0.0.1:4200', 'http://localhost:4200', 'https://manage.henmao.com'].includes(origin)) {
+                    ctx.set('Access-Control-Allow-Origin', origin);
+                    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+                    ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+                }
                 if (!(ctx.method == 'OPTIONS')) return [3 /*break*/, 1];
                 ctx.body = 200;
                 return [3 /*break*/, 3];
