@@ -17,12 +17,12 @@ export const register = async (ctx: any) => {
 export const login = async (ctx: any) => {
   const { username, password } = ctx.request.body;
   const result = await adminModel.findOne({ username, password, status: 1 }, 'username');
-  if(result){
+  if (result) {
     ctx.body = formatJson(SUCCESS_CODE, jsonwebtoken.sign({
       data: username,
       exp: Math.floor(Date.now() / 1000) + (60 * 60), // 60 seconds * 60 minutes = 1 hour
     }, JWT_SECRET));
-  }else{
+  } else {
     ctx.body = formatJson(ERROR_CODE.LOGIN_FAIL, null);
   }
 };
@@ -40,4 +40,16 @@ export const find = async (ctx: any) => {
     ctx.body = formatJson(ERROR_CODE.UNAUTHORIZED, null);
   }
 
+};
+
+// 每日重置
+export const resetLife = async (ctx: any) => {
+  const { sign } = ctx.request.body;
+  // console.log('sign', ctx.request)
+  if (sign === 'UQyvy3*rAPYt_9vXd') {
+    const result = await usersModel.updateMany({ life: { $lt: 3 } }, { $set: { life: 3 } });
+    ctx.body = formatJson(0, result);
+  } else {
+    ctx.body = formatJson(ERROR_CODE.RESET_LIFE_FAIL, {});
+  }
 };

@@ -13,6 +13,7 @@ export const ERROR_CODE = {
   UNAUTHORIZED: -401, // 未授权
   NOT_FOUND: -404, // 接口不存在
   LOGIN_FAIL: -405, // 登录失败
+  RESET_LIFE_FAIL: -501 // 重置生命失败
 };
 
 export const SUCCESS_CODE = 0;

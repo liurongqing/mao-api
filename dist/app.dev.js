@@ -82,6 +82,7 @@ var ERROR_CODE = {
     UNAUTHORIZED: -401,
     NOT_FOUND: -404,
     LOGIN_FAIL: -405,
+    RESET_LIFE_FAIL: -501 // 重置生命失败
 };
 var SUCCESS_CODE = 0;
 var JWT_SECRET = 'yjapsige__909320';
@@ -126,6 +127,7 @@ var usersModel = mongoose.model('users', new Schema({
         default: LIFE
     },
     levels: String,
+    times: String,
     avatarUrl: String,
     city: String,
     country: String,
@@ -228,12 +230,37 @@ var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function ()
         }
     });
 }); };
+// 每日重置
+var resetLife = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var sign, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                sign = ctx.request.body.sign;
+                console.log('sign', ctx.request);
+                if (!(sign === 'UQyvy3*rAPYt_9vXd')) return [3 /*break*/, 2];
+                return [4 /*yield*/, usersModel.updateMany({ life: { $lt: 3 } }, { $set: { life: 3 } })];
+            case 1:
+                result = _a.sent();
+                ctx.body = formatJson(0, result);
+                return [3 /*break*/, 3];
+            case 2:
+                ctx.body = formatJson(ERROR_CODE.RESET_LIFE_FAIL, {});
+                _a.label = 3;
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 
 var Schema$2 = mongoose.Schema;
 var levelsModel = mongoose.model('levels', new Schema$2({
     level: Number,
     topic: String,
     answer: String,
+    sumTime: {
+        type: Number,
+        default: 30 * 60
+    },
     type: {
         type: Number,
         default: 4,
@@ -302,6 +329,7 @@ adminRouter
     .get('/user', find)
     .get('/level', find$1)
     .post('/level', save)
+    .post('/reset-life', resetLife)
     .post('/login', login)
     .get('/register', register); // 临时注册
 
@@ -582,18 +610,6 @@ app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); });
-// 跨域设置
-// app.use(cors({
-//   origin: function (ctx: any) {
-//     const { origin } = ctx.request.header;
-//     if (['http://localhost:4200', 'http://127.0.0.1:4200', 'https://manage.henmao.com'].includes(origin)) {
-//       return origin;
-//     }
-//     return false;
-//   },
-//   allowHeaders: ['Authorization'],
-//   exposeHeaders: ['Authorization']
-// }));
 // 无授权处理, 未登录，或过期
 app.use(function (ctx, next) {
     return next().catch(function (err) {
@@ -611,6 +627,7 @@ app.use(jwt({ secret: JWT_SECRET, passthrough: false })
     path: [
         // /^\/sudoku/,
         /^\/admin\/login/,
+        /^\/admin\/reset-life/,
         /^\/sudoku\/login/,
     ],
 }));

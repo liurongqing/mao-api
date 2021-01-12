@@ -12,7 +12,8 @@ export const usersModel = mongoose.model(
         type: Number,
         default: LIFE
       },
-      levels: String,
+      levels: String, // 星星状态
+      times: String, // 每个关卡时间状态[-1, -1, -1]
       avatarUrl: String, // 头像
       city: String, // "Shenzhen"
       country: String, // "China"

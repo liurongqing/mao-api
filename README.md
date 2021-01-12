@@ -42,10 +42,8 @@ tsconfig.json // ts 配置文件
     "javascript.format.semicolons": "insert",
     "typescript.format.semicolons": "insert"
     ```
-    
 
-## 问题反馈
+## 计划任务
 
-若您有任何问题或建议，请不吝与我联系。
-
-- 微信: 16620882081
+crontab -e 
+* 0 * * * /user/bin/curl -d "sign=!UQyvy3*rAPYt_9vXd" http://127.0.0.1:9001/admin/reset-life

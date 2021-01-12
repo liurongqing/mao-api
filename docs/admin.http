@@ -1,6 +1,6 @@
-#@host = 127.0.0.1:9001
-@host = 182.254.138.39:9001
-@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoibGl1cm9uZ3FpbmciLCJleHAiOjE2MDkyMjUxODYsImlhdCI6MTYwOTIyMTU4Nn0.r1NjNpW43XFw0fi3DIlPwCOPASzICdQ9yvdIBzxG_XY
+@host = 127.0.0.1:9001
+# @host = 182.254.138.39:9001
+@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoibGl1cm9uZ3FpbmciLCJleHAiOjE2MTA0MjIyODUsImlhdCI6MTYxMDQxODY4NX0.JE1VB4c8AMjeMwC9KqVH_aZDT9g3cSqZmpfR8W1kvDM
 
 ## 后台相关接口
 ### 登录
@@ -28,3 +28,14 @@ Host: {{host}}
 Cache-Control: no-Cache
 content-type: application/json
 Authorization: {{Authorization}}
+
+### 每日重置生命
+POST /admin/reset-life
+Host: {{host}}
+Cache-Control: no-Cache
+content-type: application/json
+# Authorization: {{Authorization}}
+
+{
+  "sign": "UQyvy3*rAPYt_9vXd"
+}

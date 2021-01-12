@@ -8,6 +8,10 @@ export const levelsModel = mongoose.model(
       level: Number, // 第几关
       topic: String, // 题目
       answer: String, // 答案
+      sumTime: { // 关卡总时间
+        type: Number,
+        default: 30 * 60
+      },
       type: {
         type: Number,
         default: 4, // 4宫格，与9宫格
