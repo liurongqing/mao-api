@@ -46,4 +46,4 @@ tsconfig.json // ts 配置文件
 ## 计划任务
 
 crontab -e 
-* 0 * * * /user/bin/curl -d "sign=!UQyvy3*rAPYt_9vXd" http://127.0.0.1:9001/admin/reset-life
+1 0 * * * /usr/bin/curl -d "sign=UQyvy3*rAPYt_9vXd" http://127.0.0.1:9001/admin/reset-life
