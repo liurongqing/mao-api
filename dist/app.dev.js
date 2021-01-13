@@ -75,6 +75,7 @@ var WX_BASE_PATH = 'https://api.weixin.qq.com';
 var APP_ID = 'wx6ef1e85ccdd6b748';
 var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
 var LIFE = 3;
+var SHARE_NUM = 5;
 /**
  * 错误码
  */
@@ -82,6 +83,16 @@ var ERROR_CODE = {
     UNAUTHORIZED: -401,
     NOT_FOUND: -404,
     LOGIN_FAIL: -405,
+    SHARE_FAIL: -406,
+    RESET_LIFE_FAIL: -501 // 重置生命失败
+};
+// 慢慢只使用这个
+var CODE = {
+    SUCCESS: 0,
+    UNAUTHORIZED: -401,
+    NOT_FOUND: -404,
+    LOGIN_FAIL: -405,
+    SHARE_FAIL: -406,
     RESET_LIFE_FAIL: -501 // 重置生命失败
 };
 var SUCCESS_CODE = 0;
@@ -122,12 +133,16 @@ var Schema = mongoose.Schema;
 var usersModel = mongoose.model('users', new Schema({
     openid: String,
     level: Number,
+    shareNum: {
+        type: Number,
+        default: SHARE_NUM,
+    },
     life: {
         type: Number,
         default: LIFE
     },
-    levels: String,
-    times: String,
+    levels: Array,
+    times: Array,
     avatarUrl: String,
     city: String,
     country: String,
@@ -231,23 +246,25 @@ var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function ()
     });
 }); };
 // 每日重置
-var resetLife = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var resetData = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var sign, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 sign = ctx.request.body.sign;
-                console.log('sign', ctx.request);
-                if (!(sign === 'UQyvy3*rAPYt_9vXd')) return [3 /*break*/, 2];
-                return [4 /*yield*/, usersModel.updateMany({ life: { $lt: 3 } }, { $set: { life: 3 } })];
+                if (!(sign === 'UQyvy3*rAPYt_9vXd')) return [3 /*break*/, 3];
+                return [4 /*yield*/, usersModel.updateMany({}, { $set: { shareNum: SHARE_NUM } })];
             case 1:
+                _a.sent();
+                return [4 /*yield*/, usersModel.updateMany({ life: { $lt: LIFE } }, { $set: { life: LIFE } })];
+            case 2:
                 result = _a.sent();
                 ctx.body = formatJson(0, result);
-                return [3 /*break*/, 3];
-            case 2:
+                return [3 /*break*/, 4];
+            case 3:
                 ctx.body = formatJson(ERROR_CODE.RESET_LIFE_FAIL, {});
-                _a.label = 3;
-            case 3: return [2 /*return*/];
+                _a.label = 4;
+            case 4: return [2 /*return*/];
         }
     });
 }); };
@@ -255,8 +272,8 @@ var resetLife = function (ctx) { return __awaiter(void 0, void 0, void 0, functi
 var Schema$2 = mongoose.Schema;
 var levelsModel = mongoose.model('levels', new Schema$2({
     level: Number,
-    topic: String,
-    answer: String,
+    topic: Array,
+    answer: Array,
     sumTime: {
         type: Number,
         default: 30 * 60
@@ -274,7 +291,7 @@ var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                fields = '_id level topic answer type createdAt updatedAt';
+                fields = '_id level sumTime topic answer type createdAt updatedAt';
                 return [4 /*yield*/, levelsModel.find({}, fields)];
             case 1:
                 result = _a.sent();
@@ -285,40 +302,46 @@ var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
 }); };
 // 添加题目， 默认取总数加1
 var save = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _id, type, topic, answer, data, result, count, err_1;
+    var _a, _id, type, sumTime, topic, answer, data, result, count, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = ctx.request.body, _id = _a._id, type = _a.type, topic = _a.topic, answer = _a.answer;
+                _a = ctx.request.body, _id = _a._id, type = _a.type, sumTime = _a.sumTime, topic = _a.topic, answer = _a.answer;
                 data = {
                     type: type,
                     topic: topic,
-                    answer: answer
+                    answer: answer,
+                    sumTime: sumTime
                 };
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 7, , 8]);
+                _b.trys.push([1, 8, , 9]);
                 if (!_id) return [3 /*break*/, 3];
                 return [4 /*yield*/, levelsModel.updateOne({ _id: _id }, { $set: data })];
             case 2:
                 result = _b.sent();
-                return [3 /*break*/, 6];
-            case 3: return [4 /*yield*/, levelsModel.count({})];
+                return [3 /*break*/, 7];
+            case 3: return [4 /*yield*/, levelsModel.countDocuments({})];
             case 4:
                 count = _b.sent();
                 return [4 /*yield*/, levelsModel.create(__assign(__assign({}, data), { level: count + 1 }))];
             case 5:
                 result = _b.sent();
-                _b.label = 6;
+                return [4 /*yield*/, usersModel.updateMany({}, {
+                        $push: { levels: 4, times: -1 }
+                    })];
             case 6:
-                ctx.body = formatJson(0, result);
-                return [3 /*break*/, 8];
+                _b.sent();
+                _b.label = 7;
             case 7:
+                ctx.body = formatJson(0, result);
+                return [3 /*break*/, 9];
+            case 8:
                 err_1 = _b.sent();
-                console.log('err', err_1);
+                // console.log('err', err);
                 ctx.body = formatJson(-100, err_1, '失败了');
-                return [3 /*break*/, 8];
-            case 8: return [2 /*return*/];
+                return [3 /*break*/, 9];
+            case 9: return [2 /*return*/];
         }
     });
 }); };
@@ -329,7 +352,7 @@ adminRouter
     .get('/user', find)
     .get('/level', find$1)
     .post('/level', save)
-    .post('/reset-life', resetLife)
+    .post('/reset-data', resetData)
     .post('/login', login)
     .get('/register', register); // 临时注册
 
@@ -467,6 +490,36 @@ var levelsSuccess = function (ctx) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+// 分享
+var share = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var authorization, openid, shareNum;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                authorization = ctx.request.header.authorization;
+                openid = getOpenid(authorization);
+                if (!openid) return [3 /*break*/, 4];
+                return [4 /*yield*/, usersModel.findOne({ openid: openid }, 'shareNum')];
+            case 1:
+                shareNum = (_a.sent()).shareNum;
+                if (!(shareNum > 0)) return [3 /*break*/, 3];
+                return [4 /*yield*/, usersModel.updateOne({ openid: openid }, {
+                        $inc: {
+                            shareNum: -1,
+                            life: 1
+                        }
+                    })];
+            case 2:
+                _a.sent();
+                ctx.body = formatJson(CODE.SUCCESS, {});
+                return [3 /*break*/, 4];
+            case 3:
+                ctx.body = formatJson(CODE.SHARE_FAIL, {});
+                _a.label = 4;
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
 
 var jsonwebtoken$2 = require('jsonwebtoken');
 var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
@@ -499,7 +552,7 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
  * 若该用户不存在，则添加
  */
 var checkAndAddUserInfo = function (openid) { return __awaiter(void 0, void 0, void 0, function () {
-    var doc, levels, result;
+    var doc, levels, times, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, usersModel.findOne({ openid: openid })];
@@ -510,15 +563,17 @@ var checkAndAddUserInfo = function (openid) { return __awaiter(void 0, void 0, v
                 return [4 /*yield*/, generateLevels()];
             case 2:
                 levels = _a.sent();
-                console.log('levels', levels);
+                return [4 /*yield*/, generateLevelTimes()];
+            case 3:
+                times = _a.sent();
                 return [4 /*yield*/, usersModel.create({
                         openid: openid,
                         levels: levels,
+                        times: times,
                         level: 1
                     })];
-            case 3:
+            case 4:
                 result = _a.sent();
-                console.log('add result', result);
                 return [2 /*return*/];
         }
     });
@@ -530,12 +585,27 @@ var generateLevels = function () { return __awaiter(void 0, void 0, void 0, func
     var count, arr;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, levelsModel.count({})];
+            case 0: return [4 /*yield*/, levelsModel.countDocuments({})];
             case 1:
                 count = _a.sent();
                 arr = Array.from({ length: count }, function () { return 4; });
                 arr[0] = 0;
-                return [2 /*return*/, JSON.stringify(arr)];
+                return [2 /*return*/, arr];
+        }
+    });
+}); };
+/**
+ * 生成关卡时间信息
+ */
+var generateLevelTimes = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var count, arr;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, levelsModel.countDocuments({})];
+            case 1:
+                count = _a.sent();
+                arr = Array.from({ length: count }, function () { return -1; });
+                return [2 /*return*/, arr];
         }
     });
 }); };
@@ -549,7 +619,8 @@ sudokuRouter
     // .get('/level', levelsController.find)
     .get('/level/:level', findOne)
     // .post('/level', levelsController.save)
-    .post('/login', login$1);
+    .post('/login', login$1)
+    .post('/share', share);
 
 var Router$2 = require('koa-router');
 var routers = new Router$2();
@@ -627,7 +698,7 @@ app.use(jwt({ secret: JWT_SECRET, passthrough: false })
     path: [
         // /^\/sudoku/,
         /^\/admin\/login/,
-        /^\/admin\/reset-life/,
+        /^\/admin\/reset-data/,
         /^\/sudoku\/login/,
     ],
 }));

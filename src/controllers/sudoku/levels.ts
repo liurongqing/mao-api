@@ -28,13 +28,15 @@ export const findOne = async (ctx: any) => {
 
 // 添加题目， 默认取总数加1
 export const save = async (ctx: any) => {
-  const { _id, type, topic, answer } = ctx.request.body;
+  const { _id, type, sumTime, topic, answer } = ctx.request.body;
   let data: any = {
     type,
+    sumTime,
     topic,
     answer
   };
   let result: Object;
+  // console.log('sumTime', sumTime)
   try {
     if (_id) {
       result = await levelsModel.updateOne({ _id }, { $set: data });
@@ -45,6 +47,8 @@ export const save = async (ctx: any) => {
         level: count + 1
       });
     }
+
+    console.log('result', result);
 
     ctx.body = formatJson(0, result);
   } catch (err) {

@@ -3,7 +3,7 @@ const jsonwebtoken = require('jsonwebtoken');
 import { usersModel } from 'src/models/sudoku/users.model';
 import { adminModel } from 'src/models/admin/admin.model';
 import { formatJson, getOpenid } from 'src/utils';
-import { ERROR_CODE, SUCCESS_CODE, JWT_SECRET } from 'src/const';
+import { ERROR_CODE, SUCCESS_CODE, JWT_SECRET, LIFE, SHARE_NUM } from 'src/const';
 
 export const register = async (ctx: any) => {
   const { username, password } = ctx.request.query;
@@ -43,11 +43,12 @@ export const find = async (ctx: any) => {
 };
 
 // 每日重置
-export const resetLife = async (ctx: any) => {
+export const resetData = async (ctx: any) => {
   const { sign } = ctx.request.body;
   // console.log('sign', ctx.request)
   if (sign === 'UQyvy3*rAPYt_9vXd') {
-    const result = await usersModel.updateMany({ life: { $lt: 3 } }, { $set: { life: 3 } });
+    await usersModel.updateMany({}, { $set: { shareNum: SHARE_NUM } });
+    const result = await usersModel.updateMany({ life: { $lt: LIFE } }, { $set: { life: LIFE } });
     ctx.body = formatJson(0, result);
   } else {
     ctx.body = formatJson(ERROR_CODE.RESET_LIFE_FAIL, {});

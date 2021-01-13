@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { LIFE } from "../../const/index";
+import { LIFE, SHARE_NUM } from "../../const/index";
 const { Schema } = mongoose;
 
 export const usersModel = mongoose.model(
@@ -8,12 +8,16 @@ export const usersModel = mongoose.model(
     {
       openid: String,
       level: Number,
+      shareNum: {
+        type: Number,
+        default: SHARE_NUM,
+      }, // 当日分享次数
       life: {
         type: Number,
         default: LIFE
       },
-      levels: String, // 星星状态
-      times: String, // 每个关卡时间状态[-1, -1, -1]
+      levels: Array, // 星星状态
+      times: Array, // 每个关卡时间状态[-1, -1, -1]
       avatarUrl: String, // 头像
       city: String, // "Shenzhen"
       country: String, // "China"

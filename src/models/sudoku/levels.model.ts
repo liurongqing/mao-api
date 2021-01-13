@@ -6,8 +6,8 @@ export const levelsModel = mongoose.model(
   new Schema(
     {
       level: Number, // 第几关
-      topic: String, // 题目
-      answer: String, // 答案
+      topic: Array, // 题目
+      answer: Array, // 答案
       sumTime: { // 关卡总时间
         type: Number,
         default: 30 * 60

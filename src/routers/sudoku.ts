@@ -10,6 +10,7 @@ sudokuRouter
   // .get('/level', levelsController.find)
   .get('/level/:level', levelsController.findOne)
   // .post('/level', levelsController.save)
-  .post('/login', loginController.login);
+  .post('/login', loginController.login)
+  .post('/share', usersController.share);
 
 

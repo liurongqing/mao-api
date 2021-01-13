@@ -39,21 +39,32 @@ const checkAndAddUserInfo = async (openid: string) => {
   const doc = await usersModel.findOne({ openid });
   if (doc) return;
   const levels = await generateLevels();
-  console.log('levels', levels)
+  const times = await generateLevelTimes();
+  // console.log('levels', levels)
   const result = await usersModel.create({
     openid,
     levels,
+    times,
     level: 1
   });
-  console.log('add result', result);
+  // console.log('add result', result);
 };
 
 /**
  * 生成关卡信息
  */
 const generateLevels = async () => {
-  const count = await levelsModel.count({});
+  const count = await levelsModel.countDocuments({});
   const arr = Array.from({ length: count }, () => 4);
   arr[0] = 0;
-  return JSON.stringify(arr);
+  return arr;
+};
+
+/**
+ * 生成关卡时间信息
+ */
+const generateLevelTimes = async () => {
+  const count = await levelsModel.countDocuments({});
+  const arr = Array.from({ length: count }, () => -1);
+  return arr;
 };

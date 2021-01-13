@@ -1,5 +1,6 @@
 import { usersModel } from 'src/models/sudoku/users.model';
 import { formatJson, getOpenid } from 'src/utils';
+import { CODE } from 'src/const/index';
 
 // 查询所有信息
 export const find = async (ctx: any) => {
@@ -41,14 +42,14 @@ export const levelsSuccess = async (ctx: any) => {
   const openid = getOpenid(authorization);
   if (openid) {
     let { levels }: any = await usersModel.findOne({ openid }, 'levels');
-    levels = JSON.parse(levels)
-    if(levels[level - 1] < stars){
+    levels = JSON.parse(levels);
+    if (levels[level - 1] < stars) {
       levels[level - 1] = stars;
     }
-    if(levels[level] == 4){
+    if (levels[level] == 4) {
       levels[level] = 0;
     }
-    levels = JSON.stringify(levels)
+    levels = JSON.stringify(levels);
     const result = await usersModel.updateOne({ openid }, {
       $set: {
         level,
@@ -56,5 +57,25 @@ export const levelsSuccess = async (ctx: any) => {
       }
     });
     ctx.body = formatJson(0, result);
+  }
+};
+
+// 分享
+export const share = async (ctx: any) => {
+  const { authorization } = ctx.request.header;
+  const openid = getOpenid(authorization);
+  if (openid) {
+    let { shareNum }: any = await usersModel.findOne({ openid }, 'shareNum');
+    if (shareNum > 0) {
+      await usersModel.updateOne({ openid }, {
+        $inc: {
+          shareNum: -1,
+          life: 1
+        }
+      });
+      ctx.body = formatJson(CODE.SUCCESS, {});
+    } else {
+      ctx.body = formatJson(CODE.SHARE_FAIL, {});
+    }
   }
 };

@@ -45,7 +45,7 @@ app.use(jwt({ secret: JWT_SECRET, passthrough: false })
       [
         // /^\/sudoku/,
         /^\/admin\/login/,
-        /^\/admin\/reset-life/,
+        /^\/admin\/reset-data/,
         /^\/sudoku\/login/,
 
       ],

@@ -6,7 +6,7 @@ adminRouter
   .get('/user', adminController.find)
   .get('/level', levelsController.find)
   .post('/level', levelsController.save)
-  .post('/reset-life', adminController.resetLife)
+  .post('/reset-data', adminController.resetData)
   .post('/login', adminController.login)
   .get('/register', adminController.register); // 临时注册
 
