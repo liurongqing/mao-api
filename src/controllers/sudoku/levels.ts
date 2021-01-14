@@ -20,7 +20,7 @@ export const findOne = async (ctx: any) => {
     return;
   }
 
-  const fields = '_id type topic answer';
+  const fields = '_id type sumTime topic answer';
   const result = await levelsModel.findOne({ level }, fields);
   await decLife(openid, life);
   ctx.body = formatJson(0, result);

@@ -371,7 +371,7 @@ var findOne = function (ctx) { return __awaiter(void 0, void 0, void 0, function
                     ctx.body = formatJson(0, { life: 0 }); // 无生命值
                     return [2 /*return*/];
                 }
-                fields = '_id type topic answer';
+                fields = '_id type sumTime topic answer';
                 return [4 /*yield*/, levelsModel.findOne({ level: level }, fields)];
             case 2:
                 result = _a.sent();
@@ -468,14 +468,13 @@ var levelsSuccess = function (ctx) { return __awaiter(void 0, void 0, void 0, fu
                 return [4 /*yield*/, usersModel.findOne({ openid: openid }, 'levels')];
             case 1:
                 levels = (_b.sent()).levels;
-                levels = JSON.parse(levels);
+                // levels = JSON.parse(levels);
                 if (levels[level - 1] < stars) {
                     levels[level - 1] = stars;
                 }
                 if (levels[level] == 4) {
                     levels[level] = 0;
                 }
-                levels = JSON.stringify(levels);
                 return [4 /*yield*/, usersModel.updateOne({ openid: openid }, {
                         $set: {
                             level: level,

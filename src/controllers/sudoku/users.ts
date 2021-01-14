@@ -42,14 +42,14 @@ export const levelsSuccess = async (ctx: any) => {
   const openid = getOpenid(authorization);
   if (openid) {
     let { levels }: any = await usersModel.findOne({ openid }, 'levels');
-    levels = JSON.parse(levels);
+    // levels = JSON.parse(levels);
     if (levels[level - 1] < stars) {
       levels[level - 1] = stars;
     }
     if (levels[level] == 4) {
       levels[level] = 0;
     }
-    levels = JSON.stringify(levels);
+    // levels = JSON.stringify(levels);
     const result = await usersModel.updateOne({ openid }, {
       $set: {
         level,
