@@ -3,7 +3,7 @@ const jsonwebtoken = require('jsonwebtoken');
 import { usersModel } from 'src/models/sudoku/users.model';
 import { adminModel } from 'src/models/admin/admin.model';
 import { formatJson, getOpenid } from 'src/utils';
-import { ERROR_CODE, SUCCESS_CODE, JWT_SECRET, LIFE, SHARE_NUM } from 'src/const';
+import { ERROR_CODE, JWT_EXP, SUCCESS_CODE, JWT_SECRET, LIFE, SHARE_NUM } from 'src/const';
 
 export const register = async (ctx: any) => {
   const { username, password } = ctx.request.query;
@@ -20,7 +20,7 @@ export const login = async (ctx: any) => {
   if (result) {
     ctx.body = formatJson(SUCCESS_CODE, jsonwebtoken.sign({
       data: username,
-      exp: Math.floor(Date.now() / 1000) + (60 * 60), // 60 seconds * 60 minutes = 1 hour
+      exp: JWT_EXP, // 60 seconds * 60 minutes = 1 hour
     }, JWT_SECRET));
   } else {
     ctx.body = formatJson(ERROR_CODE.LOGIN_FAIL, null);

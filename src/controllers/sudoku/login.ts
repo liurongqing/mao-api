@@ -1,7 +1,7 @@
 const jsonwebtoken = require('jsonwebtoken');
 import axios from 'axios';
 import { formatJson } from 'src/utils';
-import { APP_ID, APP_SECRET, WX_BASE_PATH, JWT_SECRET} from 'src/const';
+import { APP_ID, JWT_EXP, APP_SECRET, WX_BASE_PATH, JWT_SECRET} from 'src/const';
 import { usersModel } from '../../models/sudoku/users.model';
 import { levelsModel } from '../../models/sudoku/levels.model';
 
@@ -23,7 +23,7 @@ export const login = async (ctx: any) => {
     // const authorization = encrypt(authStr);
     const authorization = jsonwebtoken.sign({
       data: authStr,
-      exp: Math.floor(Date.now() / 1000) + (60 * 60), // 60 seconds * 60 minutes = 1 hour
+      exp: JWT_EXP, // 60 seconds * 60 minutes = 1 hour
     }, JWT_SECRET);
     checkAndAddUserInfo(wxData.openid);
     ctx.body = formatJson(wxData.errcode, authorization);

@@ -74,7 +74,7 @@ function __generator(thisArg, body) {
 var WX_BASE_PATH = 'https://api.weixin.qq.com';
 var APP_ID = 'wx6ef1e85ccdd6b748';
 var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
-var LIFE = 3;
+var LIFE = 100;
 var SHARE_NUM = 5;
 /**
  * 错误码
@@ -97,6 +97,7 @@ var CODE = {
 };
 var SUCCESS_CODE = 0;
 var JWT_SECRET = 'yjapsige__909320';
+var JWT_EXP = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7); // 7天有效期
 
 var jsonwebtoken = require('jsonwebtoken');
 /**
@@ -213,7 +214,7 @@ var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function (
                 if (result) {
                     ctx.body = formatJson(SUCCESS_CODE, jsonwebtoken$1.sign({
                         data: username,
-                        exp: Math.floor(Date.now() / 1000) + (60 * 60),
+                        exp: JWT_EXP,
                     }, JWT_SECRET));
                 }
                 else {
@@ -535,7 +536,7 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
                     authStr = wxData.openid + '-' + wxData.session_key;
                     authorization = jsonwebtoken$2.sign({
                         data: authStr,
-                        exp: Math.floor(Date.now() / 1000) + (60 * 60),
+                        exp: JWT_EXP,
                     }, JWT_SECRET);
                     checkAndAddUserInfo(wxData.openid);
                     ctx.body = formatJson(wxData.errcode, authorization);
