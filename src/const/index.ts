@@ -5,7 +5,6 @@ export const APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
 export const LIFE = 5;
 export const SHARE_NUM = 5;
 
-
 /**
  * 错误码
  */
@@ -29,7 +28,5 @@ export const CODE = {
 };
 
 export const SUCCESS_CODE = 0;
-
 export const JWT_SECRET = 'yjapsige__909320';
-
 export const JWT_EXP = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7); // 7天有效期
