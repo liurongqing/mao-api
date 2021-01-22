@@ -48,4 +48,7 @@ tsconfig.json // ts 配置文件
 
 // 重置生命与分享次数
 crontab -e 
-1 0 * * * /usr/bin/curl -d "sign=UQyvy3*rAPYt_9vXd" http://127.0.0.1:9001/admin/reset-data
+1 0 * * * /usr/bin/curl -d "sign=UQyvy3*rAPYt_9vXd" https://api.henmao.com/admin/reset-data
+
+
+
