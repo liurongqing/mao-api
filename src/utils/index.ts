@@ -31,5 +31,11 @@ const key = '1234567654321MAO';
 export const getOpenid = (str: string) => {
   if (!str) return '';
   const data = jsonwebtoken.verify(str.replace('Bearer ', ''), JWT_SECRET);
-  return data.data.split('-')[0];
+  // 对以前做兼容
+  const d = data.data.split('#-#');
+  if (d) {
+    return d[0]
+  } else {
+    return data.data.split('-')[0]
+  }
 };

@@ -127,7 +127,14 @@ var getOpenid = function (str) {
     if (!str)
         return '';
     var data = jsonwebtoken.verify(str.replace('Bearer ', ''), JWT_SECRET);
-    return data.data.split('-')[0];
+    // 对以前做兼容
+    var d = data.data.split('#-#');
+    if (d) {
+        return d[0];
+    }
+    else {
+        return data.data.split('-')[0];
+    }
 };
 
 var Schema = mongoose.Schema;
@@ -534,7 +541,7 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
                 wxData = (_a.sent()).data;
                 console.log('wxData', wxData);
                 if (!wxData.openid) return [3 /*break*/, 3];
-                authStr = wxData.openid + '-' + wxData.session_key;
+                authStr = wxData.openid + '#-#' + wxData.session_key;
                 authorization = jsonwebtoken$2.sign({
                     data: authStr,
                     exp: JWT_EXP,

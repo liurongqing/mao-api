@@ -14,7 +14,7 @@ export const login = async (ctx: any) => {
   const { data: wxData } = await axios(url);
   console.log('wxData', wxData)
   if (wxData.openid) {
-    const authStr = wxData.openid + '-' + wxData.session_key;
+    const authStr = wxData.openid + '#-#' + wxData.session_key;
     // const authorization = encrypt(authStr);
     const authorization = jsonwebtoken.sign({
       data: authStr,
