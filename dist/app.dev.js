@@ -74,8 +74,8 @@ function __generator(thisArg, body) {
 var WX_BASE_PATH = 'https://api.weixin.qq.com';
 var APP_ID = 'wx6ef1e85ccdd6b748';
 var APP_SECRET = '7303c7f9b4fe3cfc3768b2f5c7d4c435';
-var LIFE = 100;
-var SHARE_NUM = 5;
+var LIFE = 3;
+var SHARE_NUM = 3;
 /**
  * 错误码
  */
@@ -523,7 +523,7 @@ var share = function (ctx) { return __awaiter(void 0, void 0, void 0, function (
 
 var jsonwebtoken$2 = require('jsonwebtoken');
 var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var code, url, wxData, authStr, authorization;
+    var code, url, wxData, authStr, authorization, infoData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -532,19 +532,23 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
                 return [4 /*yield*/, axios__default['default'](url)];
             case 1:
                 wxData = (_a.sent()).data;
-                if (wxData.openid) {
-                    authStr = wxData.openid + '-' + wxData.session_key;
-                    authorization = jsonwebtoken$2.sign({
-                        data: authStr,
-                        exp: JWT_EXP,
-                    }, JWT_SECRET);
-                    checkAndAddUserInfo(wxData.openid);
-                    ctx.body = formatJson(wxData.errcode, authorization);
-                }
-                else {
-                    ctx.body = formatJson(wxData.errcode, wxData);
-                }
-                return [2 /*return*/];
+                console.log('wxData', wxData);
+                if (!wxData.openid) return [3 /*break*/, 3];
+                authStr = wxData.openid + '-' + wxData.session_key;
+                authorization = jsonwebtoken$2.sign({
+                    data: authStr,
+                    exp: JWT_EXP,
+                }, JWT_SECRET);
+                return [4 /*yield*/, checkAndAddUserInfo(wxData.openid)];
+            case 2:
+                infoData = _a.sent();
+                console.log('infoData', infoData);
+                ctx.body = formatJson(wxData.errcode, authorization);
+                return [3 /*break*/, 4];
+            case 3:
+                ctx.body = formatJson(wxData.errcode, wxData);
+                _a.label = 4;
+            case 4: return [2 /*return*/];
         }
     });
 }); };
@@ -574,7 +578,7 @@ var checkAndAddUserInfo = function (openid) { return __awaiter(void 0, void 0, v
                     })];
             case 4:
                 result = _a.sent();
-                return [2 /*return*/];
+                return [2 /*return*/, result];
         }
     });
 }); };

@@ -10,14 +10,9 @@ export const login = async (ctx: any) => {
   const {
     code
   } = ctx.request.body;
-
-//   jwt.verify(token, secret, function (err, decoded) {
-//     if (!err){
-//           console.log(decoded.name);  //会输出123，如果过了60秒，则有错误。
-//      }
-// })
   const url = `${WX_BASE_PATH}/sns/jscode2session?appid=${APP_ID}&secret=${APP_SECRET}&js_code=${code}&grant_type=authorization_code`;
   const { data: wxData } = await axios(url);
+  console.log('wxData', wxData)
   if (wxData.openid) {
     const authStr = wxData.openid + '-' + wxData.session_key;
     // const authorization = encrypt(authStr);
@@ -25,7 +20,8 @@ export const login = async (ctx: any) => {
       data: authStr,
       exp: JWT_EXP, // 60 seconds * 60 minutes = 1 hour
     }, JWT_SECRET);
-    checkAndAddUserInfo(wxData.openid);
+    const infoData = await checkAndAddUserInfo(wxData.openid);
+    console.log('infoData', infoData);
     ctx.body = formatJson(wxData.errcode, authorization);
   } else {
     ctx.body = formatJson(wxData.errcode, wxData);
@@ -47,6 +43,7 @@ const checkAndAddUserInfo = async (openid: string) => {
     times,
     level: 1
   });
+  return result;
   // console.log('add result', result);
 };
 
