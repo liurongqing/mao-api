@@ -31,6 +31,7 @@ export const login = async (ctx: any) => {
 export const find = async (ctx: any) => {
   const fields = '_id levels level life';
   const { authorization } = ctx.request.header;
+  // console.log(ctx.request.header)
   const openid = getOpenid(authorization);
   // console.log('openid')
   if (authorization && openid) {

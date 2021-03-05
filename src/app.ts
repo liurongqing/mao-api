@@ -17,7 +17,7 @@ app.use(async (ctx: any, next: any) => {
   const { origin } = ctx.request.header;
   if (['http://127.0.0.1:4200', 'http://localhost:4200', 'https://manage.henmao.com'].includes(origin)) {
     ctx.set('Access-Control-Allow-Origin', origin);
-    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, authorization, Accept, X-Requested-With');
     ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   }
   if (ctx.method == 'OPTIONS') {
