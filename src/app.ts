@@ -10,7 +10,7 @@ import { db } from 'src/config/database';
 
 
 const app = new Koa();
-// 数据库连接
+// 数据库连接  11
 db();
 
 app.use(async (ctx: any, next: any) => {
