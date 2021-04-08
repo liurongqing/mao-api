@@ -29,4 +29,4 @@ export const CODE = {
 
 export const SUCCESS_CODE = 0;
 export const JWT_SECRET = 'yjapsige__909320';
-export const JWT_EXP = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7); // 7天有效期
+export const JWT_EXP = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365); // 365天有效期
