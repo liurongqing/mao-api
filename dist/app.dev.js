@@ -1,10 +1,31 @@
 'use strict';
 
-var mongoose = require('mongoose');
+var mongoose$1 = require('mongoose');
 var axios = require('axios');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
+function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () {
+                        return e[k];
+                    }
+                });
+            }
+        });
+    }
+    n['default'] = e;
+    return Object.freeze(n);
+}
+
+var mongoose__namespace = /*#__PURE__*/_interopNamespace(mongoose$1);
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
 
 /*! *****************************************************************************
@@ -97,9 +118,9 @@ var CODE = {
 };
 var SUCCESS_CODE = 0;
 var JWT_SECRET = 'yjapsige__909320';
-var JWT_EXP = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7); // 7天有效期
+var JWT_EXP = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365); // 365天有效期
 
-var jsonwebtoken = require('jsonwebtoken');
+var jsonwebtoken$2 = require('jsonwebtoken');
 /**
  *
  * @param code 数字
@@ -126,7 +147,7 @@ var formatJson = function (code, data, msg) {
 var getOpenid = function (str) {
     if (!str)
         return '';
-    var data = jsonwebtoken.verify(str.replace('Bearer ', ''), JWT_SECRET);
+    var data = jsonwebtoken$2.verify(str.replace('Bearer ', ''), JWT_SECRET);
     // 对以前做兼容
     var d = data.data.split('#-#');
     if (d) {
@@ -137,8 +158,8 @@ var getOpenid = function (str) {
     }
 };
 
-var Schema = mongoose.Schema;
-var usersModel = mongoose.model('users', new Schema({
+var Schema$2 = mongoose__namespace.Schema;
+var usersModel = mongoose__namespace.model('users', new Schema$2({
     openid: String,
     level: Number,
     shareNum: {
@@ -163,8 +184,8 @@ var usersModel = mongoose.model('users', new Schema({
     province: String // 省
 }, { collection: 'users', versionKey: false, timestamps: true }));
 
-var Schema$1 = mongoose.Schema;
-var adminModel = mongoose.model('admin', new Schema$1({
+var Schema$1 = mongoose__namespace.Schema;
+var adminModel = mongoose__namespace.model('admin', new Schema$1({
     username: {
         type: String,
         required: true,
@@ -209,7 +230,7 @@ var register = function (ctx) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, username, password, result;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -221,7 +242,7 @@ var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function (
                 if (result) {
                     ctx.body = formatJson(SUCCESS_CODE, jsonwebtoken$1.sign({
                         data: username,
-                        exp: JWT_EXP,
+                        exp: JWT_EXP, // 60 seconds * 60 minutes = 1 hour
                     }, JWT_SECRET));
                 }
                 else {
@@ -232,7 +253,7 @@ var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function (
     });
 }); };
 // 查询所有信息
-var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var find$2 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, authorization, openid, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -277,8 +298,8 @@ var resetData = function (ctx) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 
-var Schema$2 = mongoose.Schema;
-var levelsModel = mongoose.model('levels', new Schema$2({
+var Schema = mongoose__namespace.Schema;
+var levelsModel = mongoose__namespace.model('levels', new Schema({
     level: Number,
     topic: Array,
     answer: Array,
@@ -309,7 +330,7 @@ var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
     });
 }); };
 // 添加题目， 默认取总数加1
-var save = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var save$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _id, type, sumTime, topic, answer, data, result, count, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -354,14 +375,14 @@ var save = function (ctx) { return __awaiter(void 0, void 0, void 0, function ()
     });
 }); };
 
-var Router = require('koa-router');
-var adminRouter = new Router();
+var Router$2 = require('koa-router');
+var adminRouter = new Router$2();
 adminRouter
-    .get('/user', find)
+    .get('/user', find$2)
     .get('/level', find$1)
-    .post('/level', save)
+    .post('/level', save$1)
     .post('/reset-data', resetData)
-    .post('/login', login)
+    .post('/login', login$1)
     .get('/register', register); // 临时注册
 
 var findOne = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
@@ -418,7 +439,7 @@ var decLife = function (openid, life) { return __awaiter(void 0, void 0, void 0,
 }); };
 
 // 查询所有信息
-var find$2 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var find = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, authorization, openid, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -435,7 +456,7 @@ var find$2 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
     });
 }); };
 // 保存更新用户数据
-var save$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var save = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var userInfo, authorization, openid, result, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -528,8 +549,8 @@ var share = function (ctx) { return __awaiter(void 0, void 0, void 0, function (
     });
 }); };
 
-var jsonwebtoken$2 = require('jsonwebtoken');
-var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var jsonwebtoken = require('jsonwebtoken');
+var login = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var code, url, wxData, authStr, authorization, infoData;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -542,9 +563,9 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
                 console.log('wxData', wxData);
                 if (!wxData.openid) return [3 /*break*/, 3];
                 authStr = wxData.openid + '#-#' + wxData.session_key;
-                authorization = jsonwebtoken$2.sign({
+                authorization = jsonwebtoken.sign({
                     data: authStr,
-                    exp: JWT_EXP,
+                    exp: JWT_EXP, // 60 seconds * 60 minutes = 1 hour
                 }, JWT_SECRET);
                 return [4 /*yield*/, checkAndAddUserInfo(wxData.openid)];
             case 2:
@@ -624,17 +645,17 @@ var generateLevelTimes = function () { return __awaiter(void 0, void 0, void 0, 
 var Router$1 = require('koa-router');
 var sudokuRouter = new Router$1();
 sudokuRouter
-    .get('/user', find$2)
-    .post('/user', save$1)
+    .get('/user', find)
+    .post('/user', save)
     .post('/levels-success', levelsSuccess)
     // .get('/level', levelsController.find)
     .get('/level/:level', findOne)
     // .post('/level', levelsController.save)
-    .post('/login', login$1)
+    .post('/login', login)
     .post('/share', share);
 
-var Router$2 = require('koa-router');
-var routers = new Router$2();
+var Router = require('koa-router');
+var routers = new Router();
 routers.use('/admin', adminRouter.routes(), adminRouter.allowedMethods());
 routers.use('/sudoku', sudokuRouter.routes(), sudokuRouter.allowedMethods());
 
@@ -646,7 +667,10 @@ var config = {
     port: 27017
 };
 
+// import * as mongoose from 'mongoose';
+var mongoose = require('mongoose');
 var user = config.user, pwd = config.pwd, database = config.database, host = config.host, port = config.port;
+console.log('mongoose', mongoose.connect);
 var db = (function () {
     mongoose.connect("mongodb://" + user + ":" + pwd + "@" + host + ":" + port + "/" + database, {
         useCreateIndex: true,
@@ -668,7 +692,7 @@ var Koa = require("koa");
 var koaBody = require('koa-body');
 var jwt = require('koa-jwt');
 var app = new Koa();
-// 数据库连接
+// 数据库连接  11
 db();
 app.use(function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
     var origin;

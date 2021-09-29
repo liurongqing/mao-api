@@ -1,7 +1,9 @@
-import * as mongoose from 'mongoose';
+// import * as mongoose from 'mongoose';
+const mongoose = require('mongoose')
 import { config } from './conf';
 const { user, pwd, database, host, port } = config;
 
+console.log('mongoose', mongoose.connect)
 export default () => {
   mongoose.connect(`mongodb://${user}:${pwd}@${host}:${port}/${database}`, {
     useCreateIndex: true,
