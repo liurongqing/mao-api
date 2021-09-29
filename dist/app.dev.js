@@ -253,7 +253,7 @@ var login$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 // 查询所有信息
-var find$2 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var find$3 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, authorization, openid, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -315,7 +315,7 @@ var levelsModel = mongoose__namespace.model('levels', new Schema({
 }, { collection: 'levels', versionKey: false, timestamps: true }));
 
 // 获取列表
-var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+var find$2 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var fields, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -378,13 +378,28 @@ var save$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function 
 var Router$2 = require('koa-router');
 var adminRouter = new Router$2();
 adminRouter
-    .get('/user', find$2)
-    .get('/level', find$1)
+    .get('/user', find$3)
+    .get('/level', find$2)
     .post('/level', save$1)
     .post('/reset-data', resetData)
     .post('/login', login$1)
     .get('/register', register); // 临时注册
 
+// 获取列表
+var find$1 = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var fields, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                fields = '_id level topic answer type createdAt updatedAt';
+                return [4 /*yield*/, levelsModel.find({}, fields)];
+            case 1:
+                result = _a.sent();
+                ctx.body = formatJson(0, result);
+                return [2 /*return*/];
+        }
+    });
+}); };
 var findOne = function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var level, authorization, openid, life, fields, result;
     return __generator(this, function (_a) {
@@ -648,7 +663,7 @@ sudokuRouter
     .get('/user', find)
     .post('/user', save)
     .post('/levels-success', levelsSuccess)
-    // .get('/level', levelsController.find)
+    .get('/level', find$1)
     .get('/level/:level', findOne)
     // .post('/level', levelsController.save)
     .post('/login', login)

@@ -1,5 +1,5 @@
 @host = 127.0.0.1:9001
-@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoibGl1cm9uZ3FpbmciLCJleHAiOjE2MDg4ODU5MjUsImlhdCI6MTYwODg4MjMyNX0.Q3mVpE4f-O6Hj-U3VY39akkQHVz1agaQuTAcjBCqBSU
+@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoibGl1cm9uZ3FpbmciLCJleHAiOjE2NDkzODE0MjksImlhdCI6MTYzMTQwODQxOX0.VdX49xrSg8-fj7G3yHTZHXgMR7yMYv7jp68TS8DKTM4
 
 ## 数独库游戏相关接口
 
